@@ -1,0 +1,6 @@
+name: Pancake
+version: version
+main: com.github.jenya705.pancake.Pancake
+api-version: 1.16
+authors: [ Jenya705 ]
+description: Plugin OWA OWA OWA Pancake
