@@ -30,6 +30,27 @@ public class ArmorEquipItemEvent implements PancakeItemEvent {
     }
 
     /**
+     * @return Bukkit realisation of old item
+     */
+    public ItemStack getBukkitOldItemStack() {
+        return getBukkit().getOldArmorPiece();
+    }
+
+    /**
+     * @return Bukkit realisation of new item
+     */
+    public ItemStack getBukkitNewItemStack() {
+        return getBukkit().getNewArmorPiece();
+    }
+
+    /**
+     * @return Bukkit realisation of current item
+     */
+    public ItemStack getBukkitItemStack() {
+        return isOld() ? getBukkitOldItemStack() : getBukkitNewItemStack();
+    }
+
+    /**
      * @return is ItemStack attached to this event is a new item {@link #getItemStack()}
      */
     public boolean isNew() {

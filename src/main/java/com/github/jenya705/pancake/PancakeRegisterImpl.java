@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake;
 
 import com.github.jenya705.pancake.data.PancakeDataType;
-import com.github.jenya705.pancake.data.PancakeSerializedData;
+import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import lombok.AccessLevel;
@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 @Getter
@@ -36,6 +33,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
         Set<Class<?>> itemsClasses = packageReflections.getTypesAnnotatedWith(PancakeItem.class);
         for (Class<?> itemClass: itemsClasses) {
             PancakeItemContainer<?> itemContainer = new PancakeItemContainerImpl<>(itemClass.getConstructor().newInstance());
+            plugin.getLogger().info(String.format("[Pancake] Register item %s", itemContainer.getID()));
             getItems().put(itemContainer.getID(), itemContainer);
         }
         getItems().forEach((id, itemContainer) -> {
@@ -50,7 +48,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                     item(itemContainer, (PancakeItemListener) itemContainer.getSource(), plugin);
                 }
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Exception while trying to load item:", e);
+                plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while trying to load item:", e);
             }
         });
     }
@@ -60,14 +58,14 @@ public class PancakeRegisterImpl implements PancakeRegister {
         try {
             File configsDir = new File(plugin.getDataFolder(), "configs");
             if (!configsDir.exists()) configsDir.mkdir();
-            File file = new File(configsDir, id + ".yml");
+            File file = new File(configsDir, id.replaceAll(":", ".") + ".yml");
             if (!file.exists()) file.createNewFile();
             else configurable.load(pancake.getDataFactory().load(file, PancakeDataType.YAML));
-            PancakeSerializedData serializedData = pancake.getDataFactory().create(PancakeDataType.YAML);
+            PancakeData serializedData = pancake.getDataFactory().create(PancakeDataType.YAML);
             configurable.save(serializedData);
             Files.write(file.toPath(), serializedData.toBytes(), StandardOpenOption.WRITE);
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Configurable Pancake object can not be loaded/saved:", e);
+            plugin.getLogger().log(Level.SEVERE, "[Pancake] Configurable Pancake object can not be loaded/saved:", e);
         }
     }
 
@@ -85,7 +83,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                         PancakeItemContainer<?> currentContainer = annotation.id().isEmpty() ? container : PancakeItemUtils.getItemContainer(annotation.id());
                         if (container == null) {
                             plugin.getLogger().warning(String.format(
-                                            "Object is not Pancake item so ID of PancakeItemEventHandler " +
+                                            "[Pancake] Object is not Pancake item so ID of PancakeItemEventHandler " +
                                             "annotation cannot be empty. Class: %s, Method: %s",
                                             clazz.getName(), method.getName()
                             ));
@@ -93,7 +91,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                         }
                         else if (currentContainer == null) {
                             plugin.getLogger().warning(String.format(
-                                    "Id %s is not exist. Class: %s, Method: %s",
+                                    "[Pancake] Id %s is not exist. Class: %s, Method: %s",
                                     annotation.id(), listener.getClass().getName(), method.getName()
                             ));
                             continue;
@@ -111,17 +109,22 @@ public class PancakeRegisterImpl implements PancakeRegister {
                         );
                     } else {
                         plugin.getLogger().warning(String.format(
-                                "Only 1 arguments method can be registered, Class: %s Method: %s",
+                                "[Pancake] Only 1 arguments method can be registered, Class: %s Method: %s",
                                 listener.getClass().getName(), method.getName()
                         ));
                     }
                 } catch (Exception e) {
                     plugin.getLogger().log(Level.WARNING, String.format(
-                            "Can not subscribe event handler %s:",
+                            "[Pancake] Can not subscribe event handler %s:",
                             listener.getClass().getName()), e);
                 }
             }
         }
+    }
+
+    @Override
+    public List<String> getItemNames() {
+        return new ArrayList<>(getItems().keySet());
     }
 
     @Override

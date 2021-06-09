@@ -4,12 +4,12 @@ import java.io.File;
 
 public interface PancakeDataFactory {
 
-    PancakeSerializedData load(String content, PancakeDataType type);
+    PancakeData load(String content, PancakeDataType type);
 
-    PancakeSerializedData load(File file, PancakeDataType type);
+    PancakeData load(File file, PancakeDataType type);
 
-    PancakeSerializedData load(File file);
+    PancakeData load(File file);
 
-    PancakeSerializedData create(PancakeDataType type);
+    PancakeData create(PancakeDataType type);
 
 }
