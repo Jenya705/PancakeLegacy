@@ -2,6 +2,7 @@ package com.github.jenya705.pancake;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.github.jenya705.pancake.command.CommandEnchant;
 import com.github.jenya705.pancake.command.CommandGive;
 import com.github.jenya705.pancake.data.PancakeDataFactory;
 import com.github.jenya705.pancake.data.PancakeDataFactoryImpl;
@@ -10,6 +11,9 @@ import com.github.jenya705.pancake.item.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,9 +44,8 @@ public final class Pancake extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        CommandGive give = new CommandGive();
-        getCommand("give").setExecutor(give);
-        getCommand("give").setTabCompleter(give);
+        registerCommand("give", new CommandGive());
+        registerCommand("enchant", new CommandEnchant());
         ArmorEquipMain.enable();
         getRegister().registerAll("com.github.jenya705.pancake", this);
         getServer().getPluginManager().registerEvents(new PancakeBukkitItemListener(), this);
@@ -52,6 +55,13 @@ public final class Pancake extends JavaPlugin {
     @Override
     public void onDisable() {
 
+    }
+
+    protected void registerCommand(String command, Object commandExecutor) {
+        PluginCommand commandObject = getCommand(command);
+        if (commandObject == null) return;
+        if (commandExecutor instanceof CommandExecutor) commandObject.setExecutor((CommandExecutor) commandExecutor);
+        if (commandExecutor instanceof TabExecutor) commandObject.setTabCompleter((TabExecutor) commandExecutor);
     }
 
 }

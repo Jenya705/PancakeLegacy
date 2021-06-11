@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.github.jenya705.pancake.Pancake;
 import com.github.jenya705.pancake.PancakeConfigurable;
 import com.github.jenya705.pancake.PancakeMessage;
+import com.github.jenya705.pancake.PancakeUtils;
 import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.event.armorequip.ArmorType;
 import com.github.jenya705.pancake.item.*;
@@ -90,20 +91,20 @@ public class InvisibleCloakItem implements Listener, PancakeItemListener, Pancak
 
     @PancakeItemEventHandler(source = PancakeItemSource.CHESTPLATE)
     public void armorEquipOther(ArmorEquipItemEvent event) {
-        if (event.getBukkitItemStack() == null) return;
-        if (event.getItemStack() != null && event.getItemStack().isId(id)) return;
-        if ((event.getBukkitNewItemStack() != null && event.getBukkitOldItemStack() != null) ||
-                isSomeArmorEquipped(event.getBukkit().getPlayer().getInventory())) return; // Player was notified about cloak
-        if (event.getBukkitNewItemStack() != null) { // disable cloak
-            event.getBukkit().getPlayer().sendActionBar(Component.text(getLoseEffectCloakMessage().getRaw()));
-            disableCloak(event.getBukkit().getPlayer());
+        if (PancakeItemUtils.isItemNone(event.getBukkitItemStack()) || event.getItemStack().isId(id)) return;
+        if (event.isOld()) {
+            if (!PancakeItemUtils.isItemNone(event.getBukkitNewItemStack())) return; // Notified
+            if (isSomeArmorEquippedExcept(event.getBukkit().getPlayer().getInventory(), event.getBukkitOldItemStack())) return; // Another armor equipped
+            enableCloak(event.getBukkit().getPlayer());
+            event.getBukkit().getPlayer().sendActionBar(Component.text(getEnableEffectCloakMessage().getRaw()));
         }
         else {
-            event.getBukkit().getPlayer().sendActionBar(Component.text(getEnableEffectCloakMessage().getRaw()));
-            enableCloak(event.getBukkit().getPlayer());
+            if (isSomeArmorEquipped(event.getBukkit().getPlayer().getInventory())) return; // Notified
+            disableCloak(event.getBukkit().getPlayer());
+            event.getBukkit().getPlayer().sendActionBar(Component.text(getLoseEffectCloakMessage().getRaw()));
         }
-
     }
+
 
     protected void equipCloak(ArmorEquipItemEvent event) {
         PancakeItemStack cloak = event.getItemStack();
@@ -155,6 +156,14 @@ public class InvisibleCloakItem implements Listener, PancakeItemListener, Pancak
         return  !(PancakeItemUtils.isItemNone(inventory.getHelmet()) &&
                 PancakeItemUtils.isItemNone(inventory.getLeggings()) &&
                 PancakeItemUtils.isItemNone(inventory.getBoots()));
+    }
+
+    protected boolean isSomeArmorEquippedExcept(PlayerInventory inventory, ItemStack exceptWhat) {
+        return !(
+                (PancakeItemUtils.isItemNone(inventory.getHelmet()) || exceptWhat.equals(inventory.getHelmet())) &&
+                (PancakeItemUtils.isItemNone(inventory.getLeggings()) || exceptWhat.equals(inventory.getLeggings())) &&
+                (PancakeItemUtils.isItemNone(inventory.getBoots()) || exceptWhat.equals(inventory.getBoots()))
+                );
     }
 
     @Override

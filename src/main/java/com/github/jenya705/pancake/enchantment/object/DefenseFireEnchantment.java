@@ -26,7 +26,7 @@ import org.bukkit.entity.Entity;
 @Setter(AccessLevel.PROTECTED)
 public class DefenseFireEnchantment implements PancakeEnchantmentListener, PancakeConfigurable {
 
-    private int ticks;
+    private int ticks = 20;
 
     @PancakeEnchantmentEventHandler(source = PancakeItemSource.ARMOR)
     public void takeDamage(DamageByEntityItemEvent event, PancakeEnchantmentObject enchantmentObject) {

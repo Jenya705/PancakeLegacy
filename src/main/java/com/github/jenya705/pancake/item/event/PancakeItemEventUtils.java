@@ -34,7 +34,7 @@ public class PancakeItemEventUtils {
     public static void invokeItemEvent(PancakeItemStack itemStack, PancakeItemEvent event, PancakeItemSource... sources) {
         if (itemStack == null || event == null) return;
         for (PancakeItemSource source: sources) {
-            itemStack.getItemContainer().invokeEvent(event, source);
+            if (itemStack.getItemContainer() != null) itemStack.getItemContainer().invokeEvent(event, source);
             itemStack.getEnchantments().forEach(it ->
                 it.getEnchantmentContainer().invokeEvent(event, source, it)
             );

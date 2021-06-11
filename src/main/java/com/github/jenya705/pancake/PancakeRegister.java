@@ -14,6 +14,8 @@ public interface PancakeRegister {
 
     List<String> getItemNames();
 
+    List<String> getEnchantmentNames();
+
     void registerAll(String packageName, JavaPlugin plugin);
 
 }

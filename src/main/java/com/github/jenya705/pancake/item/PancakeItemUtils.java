@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake.item;
 
 import com.github.jenya705.pancake.Pancake;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

@@ -1,5 +1,5 @@
 name: Pancake
-version: version
+version: @version@
 main: com.github.jenya705.pancake.Pancake
 api-version: 1.16
 depend: [ ProtocolLib, NBTAPI ]

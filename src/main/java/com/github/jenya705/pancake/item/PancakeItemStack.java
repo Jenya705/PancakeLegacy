@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake.item;
 
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.github.jenya705.pancake.item;
 
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentUtils;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

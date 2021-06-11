@@ -2,10 +2,11 @@ package com.github.jenya705.pancake.enchantment;
 
 import com.github.jenya705.pancake.Pancake;
 import com.github.jenya705.pancake.item.PancakeItemStack;
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTCompoundList;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTListCompound;
+import com.github.jenya705.pancake.item.PancakeItemUtils;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTCompoundList;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import lombok.experimental.UtilityClass;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,6 +38,7 @@ public class PancakeEnchantmentUtils {
     }
 
     public static ItemStack enchantItem(ItemStack itemStack, PancakeEnchantmentContainer<?> enchantmentContainer, int level) {
+        if (PancakeItemUtils.isItemNone(itemStack)) return itemStack;
         NBTItem nbt = new NBTItem(itemStack);
         NBTCompound compound = nbt.getCompoundList("pancakeEnchantments").addCompound();
         compound.setString("id", enchantmentContainer.getId());
