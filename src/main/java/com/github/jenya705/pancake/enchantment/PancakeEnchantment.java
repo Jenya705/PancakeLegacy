@@ -1,5 +1,8 @@
 package com.github.jenya705.pancake.enchantment;
 
+import io.papermc.paper.enchantments.EnchantmentRarity;
+import org.bukkit.enchantments.EnchantmentTarget;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,5 +22,19 @@ public @interface PancakeEnchantment {
      */
     String id();
 
+    /**
+     * @return Enchantment target
+     */
+    EnchantmentTarget target();
+
+    /**
+     * @return Enchantment rarity
+     */
+    EnchantmentRarity rarity() default EnchantmentRarity.COMMON;
+
+    /**
+     * @return Max level of enchantment
+     */
+    int maxLevel() default 1;
 
 }

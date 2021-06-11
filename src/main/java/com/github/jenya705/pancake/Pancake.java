@@ -10,6 +10,7 @@ import com.github.jenya705.pancake.item.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Setter(AccessLevel.PROTECTED)

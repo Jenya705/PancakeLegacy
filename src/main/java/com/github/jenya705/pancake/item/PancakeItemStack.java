@@ -1,7 +1,10 @@
 package com.github.jenya705.pancake.item;
 
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public interface PancakeItemStack {
 
@@ -21,6 +24,11 @@ public interface PancakeItemStack {
     PancakeItemContainer<?> getItemContainer();
 
     /**
+     * @return Pancake enchantments
+     */
+    List<PancakeEnchantmentObject> getEnchantments();
+
+    /**
      * Type nbt key is 'pancake_type'
      * @return Pancake type of object, if not pancake item returns null
      */
@@ -34,9 +42,17 @@ public interface PancakeItemStack {
 
     /**
      * @param bukkit Bukkit ItemStack
-     * @return PancakeItemStack or null if itemStack is not PancakeItemStack
+     * @return {@link PancakeItemStack} if {@link PancakeItemStackImpl#canCreate(ItemStack)} is true or {@link BukkitPancakeItemStack}
      */
     static PancakeItemStack of(ItemStack bukkit) {
+        return PancakeItemStackImpl.canCreate(bukkit) ? new PancakeItemStackImpl(bukkit) : new BukkitPancakeItemStack(bukkit);
+    }
+
+    /**
+     * @param bukkit Bukkit ItemStack
+     * @return {@link PancakeItemStack} if {@link PancakeItemStackImpl#canCreate(ItemStack)} is true or null
+     */
+    static PancakeItemStack safe(ItemStack bukkit) {
         return PancakeItemStackImpl.canCreate(bukkit) ? new PancakeItemStackImpl(bukkit) : null;
     }
 

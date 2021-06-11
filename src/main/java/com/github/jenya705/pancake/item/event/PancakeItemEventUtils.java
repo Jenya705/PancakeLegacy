@@ -3,6 +3,7 @@ package com.github.jenya705.pancake.item.event;
 import com.github.jenya705.pancake.PancakeUtils;
 import com.github.jenya705.pancake.item.PancakeItemContainer;
 import com.github.jenya705.pancake.item.PancakeItemSource;
+import com.github.jenya705.pancake.item.PancakeItemStack;
 import com.github.jenya705.pancake.item.PancakeItemUtils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
@@ -16,13 +17,28 @@ public class PancakeItemEventUtils {
 
     public static void invokeEvent(PancakeItemEvent event, Player player) {
         if (event.getItemStack() != null) {
-            PancakeUtils.consumeIfNotNull(event.getItemStack().getItemContainer(), defaultConsumer(event));
+            invokeItemEvent(event.getItemStack(), event, PancakeItemSource.MAIN);
         }
         if (player != null) invokeNotMainSources(player.getInventory(), event);
     }
 
-    public static Consumer<PancakeItemContainer<?>> defaultConsumer(PancakeItemEvent event, PancakeItemSource source) {
-        return (container) -> container.invokeEvent(event, source);
+    @Deprecated
+    public static Consumer<PancakeItemContainer<?>> defaultConsumer(PancakeItemEvent event, PancakeItemSource... sources) {
+        return (container) -> {
+            for (PancakeItemSource source: sources) {
+                container.invokeEvent(event, source);
+            }
+        };
+    }
+
+    public static void invokeItemEvent(PancakeItemStack itemStack, PancakeItemEvent event, PancakeItemSource... sources) {
+        if (itemStack == null || event == null) return;
+        for (PancakeItemSource source: sources) {
+            itemStack.getItemContainer().invokeEvent(event, source);
+            itemStack.getEnchantments().forEach(it ->
+                it.getEnchantmentContainer().invokeEvent(event, source, it)
+            );
+        }
     }
 
     public static Consumer<PancakeItemContainer<?>> defaultConsumer(PancakeItemEvent event) {
@@ -31,14 +47,14 @@ public class PancakeItemEventUtils {
 
     public static void invokeNotMainSources(PlayerInventory playerInventory, PancakeItemEvent event) {
         // Armor
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getHelmet()), defaultConsumer(event, PancakeItemSource.HELMET));
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getChestplate()), defaultConsumer(event, PancakeItemSource.CHESTPLATE));
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getLeggings()), defaultConsumer(event, PancakeItemSource.LEGGINGS));
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getBoots()), defaultConsumer(event, PancakeItemSource.BOOTS));
-        // Main Hand
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getItemInMainHand()), defaultConsumer(event, PancakeItemSource.MAIN_HAND));
-        // Off Hand
-        PancakeUtils.consumeIfNotNull(PancakeItemUtils.getItemContainer(playerInventory.getItemInOffHand()), defaultConsumer(event, PancakeItemSource.OFF_HAND));
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getHelmet()), event, PancakeItemSource.HELMET, PancakeItemSource.ARMOR);
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getChestplate()), event, PancakeItemSource.CHESTPLATE, PancakeItemSource.ARMOR);
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getLeggings()), event, PancakeItemSource.LEGGINGS, PancakeItemSource.ARMOR);
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getBoots()), event, PancakeItemSource.BOOTS, PancakeItemSource.ARMOR);
+        // Main hand
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getItemInMainHand()), event, PancakeItemSource.MAIN_HAND);
+        // Off hand
+        invokeItemEvent(PancakeItemStack.of(playerInventory.getItemInOffHand()), event, PancakeItemSource.OFF_HAND);
     }
 
 }

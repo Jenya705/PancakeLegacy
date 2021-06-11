@@ -2,6 +2,10 @@ package com.github.jenya705.pancake;
 
 import com.github.jenya705.pancake.data.PancakeDataType;
 import com.github.jenya705.pancake.data.PancakeData;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentEventHandler;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentListener;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentUtils;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import lombok.AccessLevel;
@@ -25,6 +29,7 @@ import java.util.logging.Level;
 public class PancakeRegisterImpl implements PancakeRegister {
 
     private Map<String, PancakeItemContainer<?>> items = new HashMap<>();
+    private Map<String, PancakeEnchantmentContainer<?>> enchantments = new HashMap<>();
 
     @SneakyThrows
     @Override
@@ -38,19 +43,26 @@ public class PancakeRegisterImpl implements PancakeRegister {
         }
         getItems().forEach((id, itemContainer) -> {
             try {
-                if (itemContainer.getSource() instanceof Listener) {
-                    plugin.getServer().getPluginManager().registerEvents((Listener) itemContainer.getSource(), plugin);
-                }
-                if (itemContainer.getSource() instanceof PancakeConfigurable) {
-                    configurable((PancakeConfigurable) itemContainer.getSource(), id, plugin);
-                }
-                if (itemContainer.getSource() instanceof PancakeItemListener) {
-                    item(itemContainer, (PancakeItemListener) itemContainer.getSource(), plugin);
-                }
+                registerOneElement(itemContainer.getSource(), id, itemContainer, null, plugin);
             } catch (Exception e) {
                 plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while trying to load item:", e);
             }
         });
+    }
+
+    protected void registerOneElement(Object source, String id, PancakeItemContainer<?> itemContainer, PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
+        if (source instanceof Listener) {
+            plugin.getServer().getPluginManager().registerEvents((Listener) source, plugin);
+        }
+        if (source instanceof PancakeConfigurable) {
+            configurable((PancakeConfigurable) source, id, plugin);
+        }
+        if (source instanceof PancakeItemListener) {
+            item(itemContainer, (PancakeItemListener) source, plugin);
+        }
+        if (source instanceof PancakeEnchantmentListener) {
+            enchantment(enchantmentContainer, (PancakeEnchantmentListener) source, plugin);
+        }
     }
 
     public void configurable(PancakeConfigurable configurable, String id, JavaPlugin plugin) {
@@ -122,6 +134,60 @@ public class PancakeRegisterImpl implements PancakeRegister {
         }
     }
 
+    public void enchantment(PancakeEnchantmentContainer<?> container, PancakeEnchantmentListener listener, JavaPlugin plugin) {
+        Class<? extends PancakeEnchantmentListener> clazz = listener.getClass();
+        Method[] methods = clazz.getMethods();
+        for (Method method: methods) {
+            PancakeEnchantmentEventHandler[] annotations = method.getAnnotationsByType(PancakeEnchantmentEventHandler.class);
+            if (annotations == null) continue;
+            for (PancakeEnchantmentEventHandler annotation: annotations) {
+                if (annotation == null) continue;
+                Class<?> types[] = method.getParameterTypes();
+                try {
+                    if (types.length == 2) {
+                        PancakeEnchantmentContainer<?> currentContainer = annotation.id().isEmpty() ? container : PancakeEnchantmentUtils.getEnchantmentContainer(annotation.id());
+                        if (container == null) {
+                            plugin.getLogger().warning(String.format(
+                                    "[Pancake] Object is not Pancake enchantment so ID of PancakeEnchantmentEventHandler " +
+                                            "annotation cannot be empty. Class: %s, Method: %s",
+                                    clazz.getName(), method.getName()
+                            ));
+                            continue;
+                        }
+                        else if (currentContainer == null) {
+                            plugin.getLogger().warning(String.format(
+                                    "[Pancake] Id %s is not exist. Class: %s, Method: %s",
+                                    annotation.id(), listener.getClass().getName(), method.getName()
+                            ));
+                            continue;
+                        }
+                        currentContainer.addHandler(
+                                (Class<? extends PancakeItemEvent>) types[0],
+                                annotation.source(),
+                                (event, enchantmentObject) -> {
+                                    try {
+                                        method.invoke(listener, event, enchantmentObject);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    return null;
+                                }
+                        );
+                    } else {
+                        plugin.getLogger().warning(String.format(
+                                "[Pancake] Only 2 arguments method can be registered, Class: %s Method: %s",
+                                listener.getClass().getName(), method.getName()
+                        ));
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().log(Level.WARNING, String.format(
+                            "[Pancake] Can not subscribe event handler %s:",
+                            listener.getClass().getName()), e);
+                }
+            }
+        }
+    }
+
     @Override
     public List<String> getItemNames() {
         return new ArrayList<>(getItems().keySet());
@@ -130,5 +196,10 @@ public class PancakeRegisterImpl implements PancakeRegister {
     @Override
     public PancakeItemContainer<?> getItemContainer(String id) {
         return getItems().getOrDefault(id.toLowerCase(Locale.ROOT), null);
+    }
+
+    @Override
+    public PancakeEnchantmentContainer<?> getEnchantContainer(String id) {
+        return getEnchantments().getOrDefault(id.toLowerCase(Locale.ROOT), null);
     }
 }

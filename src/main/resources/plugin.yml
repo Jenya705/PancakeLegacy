@@ -10,6 +10,10 @@ commands:
     permission: pancake.command.give
     description: Give OWA OWA OWA Pancake
     usage: /give <selector> <item> [<count>=1]
+  enchant:
+    permission: pancake.command.enchant
+    description: Enchant OWA OWA OWA Pancake
+    usage: /enchant <selector> <enchant> [<level>=1]
 permissions:
   pancake.*:
     default: op
@@ -19,5 +23,8 @@ permissions:
     default: op
     children:
       pancake.command.give: true
+      pancake.command.enchant: true
   pancake.command.give:
+    default: op
+  pancake.command.enchant:
     default: op
