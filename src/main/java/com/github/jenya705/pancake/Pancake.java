@@ -53,7 +53,9 @@ public final class Pancake extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        if (getRegister() instanceof PancakeRegisterImpl) {
+            ((PancakeRegisterImpl) getRegister()).saveAll();
+        }
     }
 
     protected void registerCommand(String command, Object commandExecutor) {

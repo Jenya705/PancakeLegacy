@@ -31,8 +31,8 @@ public class PancakeItemStackImpl implements PancakeItemStack {
         setBukkit(bukkit);
         if (bukkit == null || bukkit.getType() == Material.AIR) throw new IllegalArgumentException("ItemStack is not PancakeItemStack");
         setNbt(new NBTItem(getBukkit()));
-        if (!getNbt().hasKey("pancake_type")) throw new IllegalArgumentException("ItemStack is not PancakeItemStack");
-        setItemContainer(PancakeItemUtils.getItemContainer(nbt.getString("pancake_type")));
+        if (!getNbt().hasKey(PancakeItemUtils.pancakeType)) throw new IllegalArgumentException("ItemStack is not PancakeItemStack");
+        setItemContainer(PancakeItemUtils.getItemContainer(nbt.getString(PancakeItemUtils.pancakeType)));
         setId(getItemContainer().getID());
         setEnchantments(PancakeEnchantmentUtils.getEnchantments(getNbt(), this));
     }

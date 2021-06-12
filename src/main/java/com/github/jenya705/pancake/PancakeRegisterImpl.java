@@ -15,16 +15,22 @@ import org.reflections.Reflections;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class PancakeRegisterImpl implements PancakeRegister {
 
+    public static final String customModelDataSaveFileName = "custom_model_data_save.txt";
+
+    private Map<String, Integer> customModelDataSaved = loadCustomModelDataSaved();
     private Map<String, PancakeItemContainer<?>> items = new HashMap<>();
     private Map<String, PancakeEnchantmentContainer<?>> enchantments = new HashMap<>();
 
@@ -34,15 +40,29 @@ public class PancakeRegisterImpl implements PancakeRegister {
         Reflections packageReflections = new Reflections(packageName);
         Set<Class<?>> itemClasses = packageReflections.getTypesAnnotatedWith(PancakeItem.class);
         for (Class<?> itemClass: itemClasses) {
-            PancakeItemContainer<?> itemContainer = new PancakeItemContainerImpl<>(itemClass.getConstructor().newInstance());
-            plugin.getLogger().info(String.format("[Pancake] Add item %s", itemContainer.getID()));
-            getItems().put(itemContainer.getID(), itemContainer);
+            Constructor<?> constructor;
+            try {
+                constructor = itemClass.getConstructor();
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(String.format(
+                        "[Pancake] To automatically register item, " +
+                                "it needs void constructor. Class: %s", itemClass.getName()));
+                continue;
+            }
+            registerItem(constructor.newInstance(), plugin);
         }
         Set<Class<?>> enchantClasses = packageReflections.getTypesAnnotatedWith(PancakeEnchantment.class);
         for (Class<?> enchantClass: enchantClasses) {
-            PancakeEnchantmentContainer<?> enchantmentContainer = new PancakeEnchantmentContainerImpl<>(enchantClass.getConstructor().newInstance());
-            plugin.getLogger().info(String.format("[Pancake] Add enchantment %s", enchantmentContainer.getId()));
-            getEnchantments().put(enchantmentContainer.getId(), enchantmentContainer);
+            Constructor<?> constructor;
+            try {
+                constructor = enchantClass.getConstructor();
+            } catch (NoSuchMethodException e) {
+                plugin.getLogger().warning(String.format(
+                        "[Pancake] To automatically register enchantment, " +
+                                "it needs void constructor. Class: %s", enchantClass.getName()));
+                continue;
+            }
+            registerEnchantment(constructor.newInstance(), plugin);
         }
         getItems().forEach((id, itemContainer) -> {
             try {
@@ -62,6 +82,20 @@ public class PancakeRegisterImpl implements PancakeRegister {
         });
     }
 
+    @SneakyThrows
+    protected Map<String, Integer> loadCustomModelDataSaved() {
+        File file = new File(Pancake.getPlugin().getDataFolder(), customModelDataSaveFileName);
+        if (!file.exists()) {
+            file.createNewFile();
+            return new HashMap<>();
+        }
+        Map<String, Integer> result = new HashMap<>();
+        int current = 0;
+        List<String> allLines = Files.readAllLines(file.toPath());
+        for (String line: allLines) result.put(line, current);
+        return result;
+    }
+
     protected void registerOneElement(Object source, String id, PancakeItemContainer<?> itemContainer, PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
         if (source instanceof Listener) {
             plugin.getServer().getPluginManager().registerEvents((Listener) source, plugin);
@@ -70,10 +104,10 @@ public class PancakeRegisterImpl implements PancakeRegister {
             configurable((PancakeConfigurable) source, id, plugin);
         }
         if (source instanceof PancakeItemListener) {
-            item(itemContainer, (PancakeItemListener) source, plugin);
+            registerPancakeItemListener((PancakeItemListener) source, itemContainer == null ? null : itemContainer.getID(), plugin);
         }
         if (source instanceof PancakeEnchantmentListener) {
-            enchantment(enchantmentContainer, (PancakeEnchantmentListener) source, plugin);
+            registerPancakeEnchantmentListener((PancakeEnchantmentListener) source, enchantmentContainer == null ? null : enchantmentContainer.getId(), plugin);
         }
     }
 
@@ -89,122 +123,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
             configurable.save(serializedData);
             Files.write(file.toPath(), serializedData.toBytes(), StandardOpenOption.WRITE);
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "[Pancake] Configurable Pancake object can not be loaded/saved:", e);
-        }
-    }
-
-    public void item(PancakeItemContainer<?> container, PancakeItemListener listener, JavaPlugin plugin) {
-        Class<? extends PancakeItemListener> clazz = listener.getClass();
-        Method[] methods = clazz.getMethods();
-        for (Method method: methods) {
-            PancakeItemEventHandler[] annotations = method.getAnnotationsByType(PancakeItemEventHandler.class);
-            if (annotations == null) continue;
-            for (PancakeItemEventHandler annotation: annotations) {
-                if (annotation == null) continue;
-                Class<?> types[] = method.getParameterTypes();
-                try {
-                    if (types.length == 1) {
-                        if (container == null && annotation.id().isEmpty()) {
-                            plugin.getLogger().warning(String.format(
-                                    "[Pancake] Object is not Pancake item so ID of PancakeItemEventHandler " +
-                                            "annotation cannot be empty. Class: %s, Method: %s",
-                                    clazz.getName(), method.getName()
-                            ));
-                            continue;
-                        }
-                        PancakeItemContainer<?> currentContainer = annotation.id().isEmpty() ? container : PancakeItemUtils.getItemContainer(annotation.id());
-                        if (currentContainer == null) {
-                            plugin.getLogger().warning(String.format(
-                                    "[Pancake] Id %s is not exist. Class: %s, Method: %s",
-                                    annotation.id(), listener.getClass().getName(), method.getName()
-                            ));
-                            continue;
-                        }
-                        plugin.getLogger().info(String.format(
-                                "[Pancake] Adding item handler. HandlerClass: %s, EventClass: %s, Method: %s, ID: %s, Source: %s",
-                                listener.getClass(), types[0], method.getName(), annotation.id(), annotation.source()
-                        ));
-                        currentContainer.addHandler(
-                                (Class<? extends PancakeItemEvent>) types[0],
-                                annotation.source(),
-                                (event) -> {
-                                    try {
-                                        method.invoke(listener, event);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                        );
-                    } else {
-                        plugin.getLogger().warning(String.format(
-                                "[Pancake] Only 1 arguments method can be registered, Class: %s Method: %s",
-                                listener.getClass().getName(), method.getName()
-                        ));
-                    }
-                } catch (Exception e) {
-                    plugin.getLogger().log(Level.WARNING, String.format(
-                            "[Pancake] Can not subscribe event handler %s:",
-                            listener.getClass().getName()), e);
-                }
-            }
-        }
-    }
-
-    public void enchantment(PancakeEnchantmentContainer<?> container, PancakeEnchantmentListener listener, JavaPlugin plugin) {
-        Class<? extends PancakeEnchantmentListener> clazz = listener.getClass();
-        Method[] methods = clazz.getMethods();
-        for (Method method: methods) {
-            PancakeEnchantmentEventHandler[] annotations = method.getAnnotationsByType(PancakeEnchantmentEventHandler.class);
-            if (annotations == null) continue;
-            for (PancakeEnchantmentEventHandler annotation: annotations) {
-                if (annotation == null) continue;
-                Class<?> types[] = method.getParameterTypes();
-                try {
-                    if (types.length == 2) {
-                        if (container == null && annotation.id().isEmpty()) {
-                            plugin.getLogger().warning(String.format(
-                                    "[Pancake] Object is not Pancake enchantment so ID of PancakeEnchantmentEventHandler " +
-                                            "annotation cannot be empty. Class: %s, Method: %s",
-                                    clazz.getName(), method.getName()
-                            ));
-                            continue;
-                        }
-                        PancakeEnchantmentContainer<?> currentContainer = annotation.id().isEmpty() ? container : PancakeEnchantmentUtils.getEnchantmentContainer(annotation.id());
-                        if (currentContainer == null) {
-                            plugin.getLogger().warning(String.format(
-                                    "[Pancake] Id %s is not exist. Class: %s, Method: %s",
-                                    annotation.id(), listener.getClass().getName(), method.getName()
-                            ));
-                            continue;
-                        }
-                        plugin.getLogger().info(String.format(
-                                "[Pancake] Adding enchantment handler. HandlerClass: %s, EventClass: %s, Method: %s, ID: %s, Source: %s",
-                                listener.getClass(), types[0], method.getName(), annotation.id(), annotation.source()
-                        ));
-                        currentContainer.addHandler(
-                                (Class<? extends PancakeItemEvent>) types[0],
-                                annotation.source(),
-                                (event, enchantmentObject) -> {
-                                    try {
-                                        method.invoke(listener, event, enchantmentObject);
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                    return null;
-                                }
-                        );
-                    } else {
-                        plugin.getLogger().warning(String.format(
-                                "[Pancake] Only 2 arguments method can be registered, Class: %s Method: %s",
-                                listener.getClass().getName(), method.getName()
-                        ));
-                    }
-                } catch (Exception e) {
-                    plugin.getLogger().log(Level.WARNING, String.format(
-                            "[Pancake] Can not subscribe event handler %s:",
-                            listener.getClass().getName()), e);
-                }
-            }
+            plugin.getLogger().log(Level.SEVERE, String.format("[Pancake] Configurable Pancake object can not be loaded/saved. Id: %s", id), e);
         }
     }
 
@@ -224,7 +143,183 @@ public class PancakeRegisterImpl implements PancakeRegister {
     }
 
     @Override
-    public PancakeEnchantmentContainer<?> getEnchantContainer(String id) {
+    public PancakeEnchantmentContainer<?> getEnchantmentContainer(String id) {
         return getEnchantments().getOrDefault(id.toLowerCase(Locale.ROOT), null);
     }
+
+    @Override
+    public void registerItem(Object item, JavaPlugin plugin) {
+        PancakeItem annotation = item.getClass().getAnnotation(PancakeItem.class);
+        if (annotation == null) throw new IllegalArgumentException("Object does not have PancakeItem annotation");
+        registerItem(item, annotation, plugin);
+    }
+
+    @Override
+    public void registerItem(Object item, PancakeItem annotation, JavaPlugin plugin) {
+        int customModelData;
+        if (getCustomModelDataSaved().containsKey(annotation.id())) {
+            customModelData = getCustomModelDataSaved().get(annotation.id());
+        }
+        else {
+            customModelData = getCustomModelDataSaved().size();
+            getCustomModelDataSaved().put(annotation.id(), customModelData);
+        }
+        getItems().put(annotation.id().toLowerCase(Locale.ROOT), new PancakeItemContainerImpl<>(item, annotation, customModelData));
+        if (item instanceof PancakeConfigurable) {
+            configurable((PancakeConfigurable) item, annotation.id(), plugin);
+        }
+    }
+
+    @Override
+    public void registerEnchantment(Object enchantment, JavaPlugin plugin) {
+        PancakeEnchantment annotation = enchantment.getClass().getAnnotation(PancakeEnchantment.class);
+        if (annotation == null) throw new IllegalArgumentException("Object does not have PancakeEnchantment annotation");
+        registerEnchantment(enchantment, annotation, plugin);
+    }
+
+    @Override
+    public void registerEnchantment(Object enchantment, PancakeEnchantment annotation, JavaPlugin plugin) {
+        getEnchantments().put(annotation.id().toLowerCase(Locale.ROOT), new PancakeEnchantmentContainerImpl<>(enchantment, annotation));
+        if (enchantment instanceof PancakeConfigurable) {
+            configurable((PancakeConfigurable) enchantment, annotation.id(), plugin);
+        }
+    }
+
+    @Override
+    public void registerPancakeItemListener(PancakeItemListener listener, String defaultID, JavaPlugin plugin) {
+        PancakeItemContainer<?> container = getItemContainer(defaultID);
+        Class<? extends PancakeItemListener> clazz = listener.getClass();
+        Method[] methods = clazz.getMethods();
+        for (Method method: methods) {
+            PancakeItemEventHandler[] annotations = method.getAnnotationsByType(PancakeItemEventHandler.class);
+            if (annotations == null) continue;
+            for (PancakeItemEventHandler annotation: annotations) {
+                if (annotation == null) continue;
+                Class<?> types[] = method.getParameterTypes();
+                try {
+                    if (types.length == 1) {
+                        registerPancakeItemEventHandler(
+                                (event) -> {
+                                    try {
+                                        method.invoke(listener, event);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                },
+                                (Class<? extends PancakeItemEvent>) types[0],
+                                annotation,
+                                defaultID,
+                                plugin
+                        );
+                    } else {
+                        plugin.getLogger().warning(String.format(
+                                "[Pancake] Only 1 arguments method can be registered, Class: %s Method: %s",
+                                listener.getClass().getName(), method.getName()
+                        ));
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().log(Level.WARNING, String.format(
+                            "[Pancake] Can not subscribe event handler. Class: %s, Method: %s",
+                            listener.getClass().getName(), method.getName()
+                    ), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void registerPancakeEnchantmentListener(PancakeEnchantmentListener listener, String defaultID, JavaPlugin plugin) {
+        PancakeEnchantmentContainer<?> container = getEnchantmentContainer(defaultID);
+        Class<? extends PancakeEnchantmentListener> clazz = listener.getClass();
+        Method[] methods = clazz.getMethods();
+        for (Method method: methods) {
+            PancakeEnchantmentEventHandler[] annotations = method.getAnnotationsByType(PancakeEnchantmentEventHandler.class);
+            if (annotations == null) continue;
+            for (PancakeEnchantmentEventHandler annotation: annotations) {
+                if (annotation == null) continue;
+                Class<?> types[] = method.getParameterTypes();
+                try {
+                    if (types.length == 2) {
+                        registerPancakeEnchantmentEventHandler(
+                                (event, enchantmentObject) -> {
+                                    try {
+                                        method.invoke(listener, event, enchantmentObject);
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    return null;
+                                },
+                                (Class<? extends PancakeItemEvent>) types[0],
+                                annotation,
+                                defaultID,
+                                plugin
+                        );
+                    } else {
+                        plugin.getLogger().warning(String.format(
+                                "[Pancake] Only 2 arguments method can be registered, Class: %s Method: %s",
+                                listener.getClass().getName(), method.getName()
+                        ));
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().log(Level.WARNING, String.format(
+                            "[Pancake] Can not subscribe event handler. Class: %s, Method: %s",
+                            listener.getClass().getName(), method.getName()), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void registerPancakeItemEventHandler(Consumer<PancakeItemEvent> function, Class<? extends PancakeItemEvent> clazz,
+                                                PancakeItemEventHandler handlerAnnotation, String defaultID, JavaPlugin plugin) {
+        if (defaultID == null) defaultID = ""; // Empty
+        PancakeItemContainer<?> itemContainer = getItemContainer(defaultID);
+        if (itemContainer == null && handlerAnnotation.id().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Object is not Pancake item so ID of " +
+                            "PancakeItemEventHandler annotation cannot be empty"
+            );
+        }
+        PancakeItemContainer<?> currentContainer = handlerAnnotation.id().isEmpty() ? itemContainer : getItemContainer(handlerAnnotation.id());
+        if (currentContainer == null) {
+            throw new IllegalArgumentException(String.format("Id %s is not exist", handlerAnnotation.id()));
+        }
+        currentContainer.addHandler(
+                clazz, handlerAnnotation.source(), function
+        );
+    }
+
+    @Override
+    public void registerPancakeEnchantmentEventHandler(BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void> function,
+                                                       Class<? extends PancakeItemEvent> clazz,
+                                                       PancakeEnchantmentEventHandler handlerAnnotation, String defaultID, JavaPlugin plugin) {
+        if (defaultID == null) defaultID = ""; // Empty
+        PancakeEnchantmentContainer<?> enchantmentContainer = getEnchantmentContainer(defaultID);
+        if (enchantmentContainer == null && handlerAnnotation.id().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Object is not Pancake enchantment so ID of " +
+                            "PancakeItemEventHandler annotation cannot be empty"
+            );
+        }
+        PancakeEnchantmentContainer<?> currentContainer = handlerAnnotation.id().isEmpty() ? enchantmentContainer : getEnchantmentContainer(handlerAnnotation.id());
+        if (currentContainer == null) {
+            throw new IllegalArgumentException(String.format("Id %s is not exist", handlerAnnotation.id()));
+        }
+        currentContainer.addHandler(
+                clazz, handlerAnnotation.source(), function
+        );
+    }
+
+    @SneakyThrows
+    public void saveAll() {
+        List<String> toSave = new ArrayList<>(getCustomModelDataSaved().size());
+        for (int i = 0; i < getCustomModelDataSaved().size(); ++i) toSave.add(null);
+        for (Map.Entry<String, Integer> entry: getCustomModelDataSaved().entrySet()){
+            toSave.set(entry.getValue(), entry.getKey());
+        }
+        File file = new File(Pancake.getPlugin().getDataFolder(), customModelDataSaveFileName);
+        if (!file.exists()) file.createNewFile();
+        Files.writeString(file.toPath(), String.join("\n", toSave), StandardOpenOption.WRITE);
+    }
+
 }

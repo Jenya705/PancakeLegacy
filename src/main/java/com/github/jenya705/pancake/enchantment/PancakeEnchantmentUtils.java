@@ -16,8 +16,12 @@ import java.util.List;
 @UtilityClass
 public class PancakeEnchantmentUtils {
 
+    public static final String pancakeEnchantments = "pancakeEnchantments";
+    public static final String pancakeEnchantmentID = "id";
+    public static final String pancakeEnchantmentLevel = "level";
+
     public static PancakeEnchantmentContainer<?> getEnchantmentContainer(String id) {
-        return Pancake.getPlugin().getRegister().getEnchantContainer(id);
+        return Pancake.getPlugin().getRegister().getEnchantmentContainer(id);
     }
 
     public static List<PancakeEnchantmentObject> getEnchantments(ItemStack itemStack) {
@@ -26,11 +30,11 @@ public class PancakeEnchantmentUtils {
 
     public static List<PancakeEnchantmentObject> getEnchantments(NBTItem nbt, PancakeItemStack pancakeItemStack) {
         List<PancakeEnchantmentObject> enchantments = new ArrayList<>();
-        NBTCompoundList enchantmentsNBT = nbt.getCompoundList("pancakeEnchantments");
+        NBTCompoundList enchantmentsNBT = nbt.getCompoundList(pancakeEnchantments);
         for (NBTListCompound compound: enchantmentsNBT) {
             enchantments.add(new PancakeEnchantmentObjectImpl(
-                    PancakeEnchantmentUtils.getEnchantmentContainer(compound.getString("id")),
-                    compound.getInteger("level"),
+                    PancakeEnchantmentUtils.getEnchantmentContainer(compound.getString(pancakeEnchantmentID)),
+                    compound.getInteger(pancakeEnchantmentLevel),
                     pancakeItemStack
             ));
         }
@@ -40,14 +44,14 @@ public class PancakeEnchantmentUtils {
     public static ItemStack enchantItem(ItemStack itemStack, PancakeEnchantmentContainer<?> enchantmentContainer, int level) {
         if (PancakeItemUtils.isItemNone(itemStack)) return itemStack;
         NBTItem nbt = new NBTItem(itemStack);
-        NBTCompound compound = nbt.getCompoundList("pancakeEnchantments").addCompound();
-        compound.setString("id", enchantmentContainer.getId());
-        compound.setInteger("level", level);
+        NBTCompound compound = nbt.getCompoundList(pancakeEnchantments).addCompound();
+        compound.setString(pancakeEnchantmentID, enchantmentContainer.getId());
+        compound.setInteger(pancakeEnchantmentLevel, level);
         return nbt.getItem();
     }
 
     public static ItemStack enchantItem(ItemStack itemStack, String id, int level) {
-        return enchantItem(itemStack, Pancake.getPlugin().getRegister().getEnchantContainer(id), level);
+        return enchantItem(itemStack, Pancake.getPlugin().getRegister().getEnchantmentContainer(id), level);
     }
 
 }

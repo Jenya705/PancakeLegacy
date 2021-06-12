@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 @UtilityClass
 public class PancakeItemUtils {
 
+    public static final String pancakeType = "pancake_type";
+
     public static PancakeItemContainer<?> getItemContainer(String id) {
         Pancake pancake = Pancake.getPlugin();
         return pancake.getRegister().getItemContainer(id);
@@ -19,7 +21,7 @@ public class PancakeItemUtils {
     public static PancakeItemContainer<?> getItemContainer(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR) return null;
         NBTItem nbt = new NBTItem(itemStack);
-        return nbt.hasKey("pancake_type") ? getItemContainer(nbt.getString("pancake_type")) : null;
+        return nbt.hasKey(pancakeType) ? getItemContainer(nbt.getString(pancakeType)) : null;
     }
 
     public static ItemStack generateItemStack(String id) {
@@ -30,9 +32,10 @@ public class PancakeItemUtils {
         ItemStack itemStack = new ItemStack(itemContainer.getMaterial());
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.displayName(Component.text(itemContainer.getName()));
+        itemMeta.setCustomModelData(itemContainer.getCustomModelData());
         itemStack.setItemMeta(itemMeta);
         NBTItem nbt = new NBTItem(itemStack);
-        nbt.setString("pancake_type", itemContainer.getID());
+        nbt.setString(pancakeType, itemContainer.getID());
         return nbt.getItem();
     }
 

@@ -18,6 +18,8 @@ public interface PancakeItemContainer<T> {
      */
     T getSource();
 
+    int getCustomModelData();
+
     void addHandler(Class<? extends PancakeItemEvent> event, PancakeItemSource source, Consumer<PancakeItemEvent> consumer);
 
     void invokeEvent(PancakeItemEvent event, PancakeItemSource source);

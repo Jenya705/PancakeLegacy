@@ -34,6 +34,18 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
         Class<?> clazz = source.getClass();
         PancakeEnchantment pancakeEnchantment = clazz.getAnnotation(PancakeEnchantment.class);
         if (pancakeEnchantment == null) throw new IllegalArgumentException("Source does not have PancakeEnchantment annotation");
+        setValues(source, pancakeEnchantment);
+    }
+
+    /**
+     * @param source Source object
+     * @param pancakeEnchantment PancakeEnchantment annotation
+     */
+    public PancakeEnchantmentContainerImpl(T source, PancakeEnchantment pancakeEnchantment) {
+        setValues(source, pancakeEnchantment);
+    }
+
+    protected void setValues(T source, PancakeEnchantment pancakeEnchantment) {
         setName(pancakeEnchantment.name());
         setId(pancakeEnchantment.id());
         setTarget(pancakeEnchantment.target());
