@@ -1,5 +1,6 @@
 package com.github.jenya705.pancake.event.armorequip;
 
+import com.github.jenya705.pancake.event.armorequip.BukkitArmorEquipEvent.EquipMethod;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
@@ -15,8 +16,6 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
-
-import com.github.jenya705.pancake.event.armorequip.BukkitArmorEquipEvent.EquipMethod;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
@@ -38,7 +37,8 @@ public class ArmorListener implements Listener{
 
 	@EventHandler(priority =  EventPriority.HIGHEST, ignoreCancelled = true)
 	public final void inventoryClick(final InventoryClickEvent e){
-		boolean shift = false, numberkey = false;
+		boolean shift = false; // Pancake
+		boolean numberkey = false;
 		if(e.isCancelled()) return;
 		if(e.getAction() == InventoryAction.NOTHING) return;// Why does this get called if nothing happens??
 		if(e.getClick().equals(ClickType.SHIFT_LEFT) || e.getClick().equals(ClickType.SHIFT_RIGHT)){
@@ -115,40 +115,34 @@ public class ArmorListener implements Listener{
 		if(e.getAction() == Action.PHYSICAL) return;
 		if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
 			Player player = e.getPlayer();
-			if(!e.useInteractedBlock().equals(Result.DENY)){
-				if(e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && !player.isSneaking()){// Having both of these checks is useless, might as well do it though.
+			if(!e.useInteractedBlock().equals(Result.DENY) // Pancake - if optimization
+					&& e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && !player.isSneaking()){// Having both of these checks is useless, might as well do it though.
 					// Some blocks have actions when you right click them which stops the client from equipping the armor in hand.
-					Material mat = e.getClickedBlock().getType();
-					// Pancake Start
-					/*
-					for(String s : blockedMaterials){
-						if(mat.name().equalsIgnoreCase(s)) return;
-					}
-					*/
-					if (mat.isInteractable()) {
-						switch (mat){
-							case PISTON:
-							case PISTON_HEAD:
-							case MOVING_PISTON:
-							case STICKY_PISTON:
-								return;
-							default:
-								break;
-						}
-					}
-					// Pancake End
-
+				Material mat = e.getClickedBlock().getType();
+				// Pancake Start
+				/*
+				for(String s : blockedMaterials){
+					if(mat.name().equalsIgnoreCase(s)) return;
 				}
+				*/
+				if (mat.isInteractable()) {
+					switch (mat){
+						case PISTON, PISTON_HEAD, MOVING_PISTON, STICKY_PISTON:
+							return;
+						default:
+							break;
+					}
+				}
+				// Pancake End
+
 			}
 			ArmorType newArmorType = ArmorType.matchType(e.getItem());
-			if(newArmorType != null){
-				if(newArmorType.equals(ArmorType.HELMET) && isAirOrNull(e.getPlayer().getInventory().getHelmet()) || newArmorType.equals(ArmorType.CHESTPLATE) && isAirOrNull(e.getPlayer().getInventory().getChestplate()) || newArmorType.equals(ArmorType.LEGGINGS) && isAirOrNull(e.getPlayer().getInventory().getLeggings()) || newArmorType.equals(ArmorType.BOOTS) && isAirOrNull(e.getPlayer().getInventory().getBoots())){
-					BukkitArmorEquipEvent armorEquipEvent = new BukkitArmorEquipEvent(e.getPlayer(), EquipMethod.HOTBAR, ArmorType.matchType(e.getItem()), null, e.getItem());
-					Bukkit.getServer().getPluginManager().callEvent(armorEquipEvent);
-					if(armorEquipEvent.isCancelled()){
-						e.setCancelled(true);
-						player.updateInventory();
-					}
+			if(newArmorType != null && newArmorType.equals(ArmorType.HELMET) && isAirOrNull(e.getPlayer().getInventory().getHelmet()) || newArmorType.equals(ArmorType.CHESTPLATE) && isAirOrNull(e.getPlayer().getInventory().getChestplate()) || newArmorType.equals(ArmorType.LEGGINGS) && isAirOrNull(e.getPlayer().getInventory().getLeggings()) || newArmorType.equals(ArmorType.BOOTS) && isAirOrNull(e.getPlayer().getInventory().getBoots())){
+				BukkitArmorEquipEvent armorEquipEvent = new BukkitArmorEquipEvent(e.getPlayer(), EquipMethod.HOTBAR, ArmorType.matchType(e.getItem()), null, e.getItem());
+				Bukkit.getServer().getPluginManager().callEvent(armorEquipEvent);
+				if(armorEquipEvent.isCancelled()){
+					e.setCancelled(true);
+					player.updateInventory();
 				}
 			}
 		}

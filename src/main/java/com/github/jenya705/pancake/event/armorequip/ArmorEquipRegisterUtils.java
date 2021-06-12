@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
  * @since Jul 30, 2015
  */
 @UtilityClass
-public class ArmorEquipMain{
+public class ArmorEquipRegisterUtils {
 
 	public static void enable(){
 		Bukkit.getServer().getPluginManager().registerEvents(new ArmorListener(), Pancake.getPlugin());

@@ -6,15 +6,14 @@ import com.github.jenya705.pancake.command.CommandEnchant;
 import com.github.jenya705.pancake.command.CommandGive;
 import com.github.jenya705.pancake.data.PancakeDataFactory;
 import com.github.jenya705.pancake.data.PancakeDataFactoryImpl;
-import com.github.jenya705.pancake.event.armorequip.ArmorEquipMain;
-import com.github.jenya705.pancake.item.*;
+import com.github.jenya705.pancake.event.armorequip.ArmorEquipRegisterUtils;
+import com.github.jenya705.pancake.item.PancakeBukkitItemListener;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Setter(AccessLevel.PROTECTED)
@@ -46,7 +45,7 @@ public final class Pancake extends JavaPlugin {
     public void onEnable() {
         registerCommand("give", new CommandGive());
         registerCommand("enchant", new CommandEnchant());
-        ArmorEquipMain.enable();
+        ArmorEquipRegisterUtils.enable();
         getRegister().registerAll("com.github.jenya705.pancake", this);
         getServer().getPluginManager().registerEvents(new PancakeBukkitItemListener(), this);
         getDataFolder().mkdir();

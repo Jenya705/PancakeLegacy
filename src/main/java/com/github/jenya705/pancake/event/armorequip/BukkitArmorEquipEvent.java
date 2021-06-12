@@ -16,7 +16,8 @@ public final class BukkitArmorEquipEvent extends PlayerEvent implements Cancella
 	private boolean cancel = false;
 	private final EquipMethod equipType;
 	private final ArmorType type;
-	private ItemStack oldArmorPiece, newArmorPiece;
+	private ItemStack oldArmorPiece; // Pancake - make one line for each declaration
+	private ItemStack newArmorPiece;
 	
 	/**
 	 * @param player The player who put on / removed the armor.

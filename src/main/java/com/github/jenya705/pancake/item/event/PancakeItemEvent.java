@@ -2,7 +2,6 @@ package com.github.jenya705.pancake.item.event;
 
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *

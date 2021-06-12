@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake;
 
-import com.github.jenya705.pancake.data.PancakeDataType;
 import com.github.jenya705.pancake.data.PancakeData;
+import com.github.jenya705.pancake.data.PancakeDataType;
 import com.github.jenya705.pancake.enchantment.*;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;

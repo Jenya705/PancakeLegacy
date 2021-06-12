@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Present {@link EntityPickupItemEvent} as {@link PancakeItemEvent}

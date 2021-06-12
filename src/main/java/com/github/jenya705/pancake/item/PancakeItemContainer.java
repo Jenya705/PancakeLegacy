@@ -2,10 +2,7 @@ package com.github.jenya705.pancake.item;
 
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import org.bukkit.Material;
-import org.bukkit.event.Event;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public interface PancakeItemContainer<T> {

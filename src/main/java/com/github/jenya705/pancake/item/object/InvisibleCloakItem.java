@@ -1,15 +1,16 @@
 package com.github.jenya705.pancake.item.object;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.*;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
 import com.github.jenya705.pancake.Pancake;
 import com.github.jenya705.pancake.PancakeConfigurable;
 import com.github.jenya705.pancake.PancakeMessage;
-import com.github.jenya705.pancake.PancakeUtils;
 import com.github.jenya705.pancake.data.PancakeData;
-import com.github.jenya705.pancake.event.armorequip.ArmorType;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.ArmorEquipItemEvent;
 import lombok.AccessLevel;
@@ -19,9 +20,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -30,7 +29,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 

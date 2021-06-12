@@ -16,14 +16,11 @@ public class DispenserArmorListener implements Listener{
 	@EventHandler
 	public void dispenseArmorEvent(BlockDispenseArmorEvent event){
 		ArmorType type = ArmorType.matchType(event.getItem());
-		if(type != null){
-			if(event.getTargetEntity() instanceof Player){
-				Player p = (Player) event.getTargetEntity();
-				BukkitArmorEquipEvent armorEquipEvent = new BukkitArmorEquipEvent(p, BukkitArmorEquipEvent.EquipMethod.DISPENSER, type, null, event.getItem());
-				Bukkit.getServer().getPluginManager().callEvent(armorEquipEvent);
-				if(armorEquipEvent.isCancelled()){
-					event.setCancelled(true);
-				}
+		if(type != null && event.getTargetEntity() instanceof Player p){
+			BukkitArmorEquipEvent armorEquipEvent = new BukkitArmorEquipEvent(p, BukkitArmorEquipEvent.EquipMethod.DISPENSER, type, null, event.getItem());
+			Bukkit.getServer().getPluginManager().callEvent(armorEquipEvent);
+			if(armorEquipEvent.isCancelled()){
+				event.setCancelled(true);
 			}
 		}
 	}

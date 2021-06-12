@@ -1,7 +1,6 @@
 package com.github.jenya705.pancake.item.event;
 
 import com.github.jenya705.pancake.event.armorequip.BukkitArmorEquipEvent;
-import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import lombok.AccessLevel;
 import lombok.Getter;

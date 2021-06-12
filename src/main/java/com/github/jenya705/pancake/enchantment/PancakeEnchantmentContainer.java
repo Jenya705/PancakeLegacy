@@ -1,6 +1,5 @@
 package com.github.jenya705.pancake.enchantment;
 
-import com.github.jenya705.pancake.item.PancakeItem;
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import io.papermc.paper.enchantments.EnchantmentRarity;
