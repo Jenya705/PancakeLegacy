@@ -5,6 +5,7 @@ import com.github.jenya705.pancake.data.PancakeDataType;
 import com.github.jenya705.pancake.enchantment.*;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,9 +29,6 @@ import java.util.logging.Level;
 @Setter(AccessLevel.PROTECTED)
 public class PancakeRegisterImpl implements PancakeRegister {
 
-    public static final String customModelDataSaveFileName = "custom_model_data_save.txt";
-
-    private Map<String, Integer> customModelDataSaved = loadCustomModelDataSaved();
     private Map<String, PancakeItemContainer<?>> items = new HashMap<>();
     private Map<String, PancakeEnchantmentContainer<?>> enchantments = new HashMap<>();
 
@@ -80,20 +78,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
                 plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while trying to load enchant:", e);
             }
         });
-    }
-
-    @SneakyThrows
-    protected Map<String, Integer> loadCustomModelDataSaved() {
-        File file = new File(Pancake.getPlugin().getDataFolder(), customModelDataSaveFileName);
-        if (!file.exists()) {
-            file.createNewFile();
-            return new HashMap<>();
-        }
-        Map<String, Integer> result = new HashMap<>();
-        int current = 0;
-        List<String> allLines = Files.readAllLines(file.toPath());
-        for (String line: allLines) result.put(line, current);
-        return result;
     }
 
     protected void registerOneElement(Object source, String id, PancakeItemContainer<?> itemContainer, PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
@@ -156,15 +140,11 @@ public class PancakeRegisterImpl implements PancakeRegister {
 
     @Override
     public void registerItem(Object item, PancakeItem annotation, JavaPlugin plugin) {
-        int customModelData;
-        if (getCustomModelDataSaved().containsKey(annotation.id())) {
-            customModelData = getCustomModelDataSaved().get(annotation.id());
-        }
-        else {
-            customModelData = getCustomModelDataSaved().size();
-            getCustomModelDataSaved().put(annotation.id(), customModelData);
-        }
-        getItems().put(annotation.id().toLowerCase(Locale.ROOT), new PancakeItemContainerImpl<>(item, annotation, customModelData));
+        Pancake pancake = Pancake.getPlugin();
+        getItems().put(annotation.id().toLowerCase(Locale.ROOT),
+                new PancakeItemContainerImpl<>(item, annotation,
+                item instanceof CustomModelItem ? pancake.getCustomModelDataContainer().getCustomModelData(item, annotation) : 0 // (0 - default custom model data)
+        ));
         if (item instanceof PancakeConfigurable) {
             configurable((PancakeConfigurable) item, annotation.id(), plugin);
         }
@@ -187,7 +167,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
 
     @Override
     public void registerPancakeItemListener(PancakeItemListener listener, String defaultID, JavaPlugin plugin) {
-        PancakeItemContainer<?> container = getItemContainer(defaultID);
         Class<? extends PancakeItemListener> clazz = listener.getClass();
         Method[] methods = clazz.getMethods();
         for (Method method: methods) {
@@ -229,7 +208,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
 
     @Override
     public void registerPancakeEnchantmentListener(PancakeEnchantmentListener listener, String defaultID, JavaPlugin plugin) {
-        PancakeEnchantmentContainer<?> container = getEnchantmentContainer(defaultID);
         Class<? extends PancakeEnchantmentListener> clazz = listener.getClass();
         Method[] methods = clazz.getMethods();
         for (Method method: methods) {
@@ -308,18 +286,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
         currentContainer.addHandler(
                 clazz, handlerAnnotation.source(), function
         );
-    }
-
-    @SneakyThrows
-    public void saveAll() {
-        List<String> toSave = new ArrayList<>(getCustomModelDataSaved().size());
-        for (int i = 0; i < getCustomModelDataSaved().size(); ++i) toSave.add(null);
-        for (Map.Entry<String, Integer> entry: getCustomModelDataSaved().entrySet()){
-            toSave.set(entry.getValue(), entry.getKey());
-        }
-        File file = new File(Pancake.getPlugin().getDataFolder(), customModelDataSaveFileName);
-        if (!file.exists()) file.createNewFile();
-        Files.writeString(file.toPath(), String.join("\n", toSave), StandardOpenOption.WRITE);
     }
 
 }

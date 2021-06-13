@@ -13,6 +13,7 @@ import com.github.jenya705.pancake.PancakeMessage;
 import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.ArmorEquipItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +40,7 @@ import java.util.logging.Level;
 )
 @Getter
 @Setter(AccessLevel.PROTECTED)
-public class InvisibleCloakItem implements Listener, PancakeItemListener, PancakeConfigurable {
+public class InvisibleCloakItem implements Listener, PancakeItemListener, PancakeConfigurable, CustomModelItem {
 
     public static final String id = "pancake:invisible_cloak";
 
@@ -105,14 +106,12 @@ public class InvisibleCloakItem implements Listener, PancakeItemListener, Pancak
 
 
     protected void equipCloak(ArmorEquipItemEvent event) {
-        PancakeItemStack cloak = event.getItemStack();
         Player player = event.getBukkit().getPlayer();
         player.sendActionBar(Component.text(getEquipCloakMessage().getRaw()));
         enableCloak(player);
     }
 
     protected void unequipCloak(ArmorEquipItemEvent event) {
-        PancakeItemStack cloak = event.getItemStack();
         Player player = event.getBukkit().getPlayer();
         player.sendActionBar(Component.text(getUnequipCloakMessage().getRaw()));
         disableCloak(player);

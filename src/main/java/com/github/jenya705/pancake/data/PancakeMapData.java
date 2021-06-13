@@ -10,6 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -86,6 +87,13 @@ public abstract class PancakeMapData<T, V> implements PancakeData {
     public Double getDouble(Object key) {
         Object obj = data.get(key);
         if (obj instanceof Double) return (Double) obj;
+        throw new IllegalArgumentException(String.format("Object: %s is not exact type of executed method", obj));
+    }
+
+    @Override
+    public List<Object> getArray(Object key) {
+        Object obj = data.get(key);
+        if (obj instanceof List) return (List<Object>) obj;
         throw new IllegalArgumentException(String.format("Object: %s is not exact type of executed method", obj));
     }
 
@@ -201,6 +209,12 @@ public abstract class PancakeMapData<T, V> implements PancakeData {
     public Double getDouble(Object key, Double defaultValue) {
         if (!hasKey(key)) return defaultValue;
         return getDouble(key);
+    }
+
+    @Override
+    public List<Object> getArray(Object key, List<Object> defaultValue) {
+        if (!hasKey(key)) return defaultValue;
+        return getArray(key);
     }
 
     @Override

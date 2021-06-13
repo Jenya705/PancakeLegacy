@@ -4,6 +4,8 @@ import com.github.jenya705.pancake.PancakeMessage;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+
 /**
  * Pancake Data
  */
@@ -28,6 +30,8 @@ public interface PancakeData {
     Float getFloat(Object key);
 
     Double getDouble(Object key);
+
+    List<Object> getArray(Object key);
 
     PancakeData getDirectory(Object key);
 
@@ -56,6 +60,8 @@ public interface PancakeData {
     Float getFloat(Object key, Float defaultValue);
 
     Double getDouble(Object key, Double defaultValue);
+
+    List<Object> getArray(Object key, List<Object> defaultValue);
 
     PancakeData getDirectory(Object key, PancakeData defaultValue);
 

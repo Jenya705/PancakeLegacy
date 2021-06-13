@@ -49,6 +49,7 @@ public interface PancakeRegister {
      *
      * Register item.
      * If item is instance of {@link PancakeConfigurable} it will load and save it automatically
+     * If item is instance of {@link com.github.jenya705.pancake.item.model.CustomModelItem} it will register it
      *
      * @param item Object with {@link PancakeItem} annotation
      * @param plugin Item owner
@@ -60,6 +61,7 @@ public interface PancakeRegister {
      *
      * Register item.
      * If item is instance of {@link PancakeConfigurable} it will load and save it automatically
+     * If item is instance of {@link com.github.jenya705.pancake.item.model.CustomModelItem} it will register it
      *
      * @param item Source object
      * @param annotation Item annotation
