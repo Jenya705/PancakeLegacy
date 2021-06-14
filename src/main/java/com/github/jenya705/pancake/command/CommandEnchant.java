@@ -43,6 +43,7 @@ public class CommandEnchant implements CommandExecutor, TabExecutor {
             sender.sendMessage(ChatColor.RED + String.format("Pancake enchantment with id %s is not exist", enchantmentString));
             return true;
         }
+        level = Math.max(level, enchantmentContainer.getMaxLevel());
         if (selectorString.equals("@a")) {
             for (Player player: Bukkit.getOnlinePlayers()) {
                 ItemStack generatedItem = PancakeEnchantmentUtils.enchantItem(player.getInventory().getItemInMainHand(), enchantmentContainer, level);
