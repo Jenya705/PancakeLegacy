@@ -3,10 +3,25 @@ package com.github.jenya705.pancake.resourcepack;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.EntityType;
 
+import java.io.File;
+
 /**
  * Resource pack builder
  */
 public interface ResourcePack {
+
+    /**
+     * @param namespaceFile Namespace File
+     * @return Resource pack implementation (automatic add files)
+     */
+    static ResourcePack of(File namespaceFile) {
+        return new ResourcePackImpl(namespaceFile);
+    }
+
+    /**
+     * @return namespace of resource pack
+     */
+    String getNamespace();
 
     /**
      *

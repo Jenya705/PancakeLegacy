@@ -12,4 +12,9 @@ public interface ResourcePackModelOverride {
 
     Map<String, Object> getPredicate();
 
+    /**
+     * @return Object as json map (String, Object)
+     */
+    Map<String, Object> asMap();
+
 }

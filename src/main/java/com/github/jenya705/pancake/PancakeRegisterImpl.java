@@ -6,10 +6,17 @@ import com.github.jenya705.pancake.enchantment.*;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
+import com.github.jenya705.pancake.resourcepack.ResourcePackModel;
+import com.github.jenya705.pancake.resourcepack.ResourcePackModelImpl;
+import com.github.jenya705.pancake.resourcepack.ResourcePackModelType;
+import com.github.jenya705.pancake.resourcepack.ResourcePackTextureType;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -28,6 +35,8 @@ import java.util.logging.Level;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class PancakeRegisterImpl implements PancakeRegister {
+
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private Map<String, PancakeItemContainer<?>> items = new HashMap<>();
     private Map<String, PancakeEnchantmentContainer<?>> enchantments = new HashMap<>();
@@ -78,14 +87,59 @@ public class PancakeRegisterImpl implements PancakeRegister {
                 plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while trying to load enchant:", e);
             }
         });
+        applyCustomModels(plugin);
+    }
+
+    public void applyCustomModels(JavaPlugin plugin) {
+        Map<Material, ResourcePackModelImpl.ResourcePackModelImplBuilder> materialBuilders = new HashMap<>();
+        Pancake pancake = Pancake.getPlugin();
+        getItems().forEach((id, itemContainer) -> {
+            if (!(itemContainer.getSource() instanceof CustomModelItem customModelItem)) return;
+            ResourcePackModelImpl.ResourcePackModelImplBuilder builder;
+            if (!materialBuilders.containsKey(itemContainer.getMaterial())) {
+                builder = ResourcePackModel.builder();
+                builder
+                        .parent("minecraft:item/generated")
+                        .texture("layer0", "minecraft:item/" + itemContainer.getMaterial().name().toLowerCase(Locale.ROOT));
+                materialBuilders.put(itemContainer.getMaterial(), builder);
+            }
+            else {
+                builder = materialBuilders.get(itemContainer.getMaterial());
+            }
+            customModelItem.apply(builder, itemContainer.getCustomModelData());
+            pancake.getResourcePack().model(ResourcePackModelType.ITEM, customModelItem.getModelName() + ".json",
+                    gson.toJson(
+                            ResourcePackModel.builder()
+                                    .parent("minecraft:item/generated")
+                                    .texture("layer0", "item/" + customModelItem.getModelName())
+                                    .build()
+                                    .asMap()
+                    )
+            );
+            try {
+                pancake.getResourcePack().texture(
+                        ResourcePackTextureType.ITEM,
+                        customModelItem.getModelName() + ".png",
+                        plugin.getResource(customModelItem.getModelName() + ".png").readAllBytes()
+                );
+            } catch (IOException | NullPointerException e) {
+                plugin.getLogger().log(Level.WARNING, "Exception while loading texture of item:", e);
+            }
+        });
+        materialBuilders.forEach((material, builder) ->
+            pancake.getResourcePack().model(ResourcePackModelType.ITEM, material.name().toLowerCase(Locale.ROOT) + ".json",
+                    gson.toJson(
+                            builder
+                                    .build()
+                                    .asMap()
+                    )
+            )
+        );
     }
 
     protected void registerOneElement(Object source, String id, PancakeItemContainer<?> itemContainer, PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
         if (source instanceof Listener) {
             plugin.getServer().getPluginManager().registerEvents((Listener) source, plugin);
-        }
-        if (source instanceof PancakeConfigurable) {
-            configurable((PancakeConfigurable) source, id, plugin);
         }
         if (source instanceof PancakeItemListener) {
             registerPancakeItemListener((PancakeItemListener) source, itemContainer == null ? null : itemContainer.getID(), plugin);
@@ -250,8 +304,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
     @Override
     public void registerPancakeItemEventHandler(Consumer<PancakeItemEvent> function, Class<? extends PancakeItemEvent> clazz,
                                                 PancakeItemEventHandler handlerAnnotation, String defaultID, JavaPlugin plugin) {
-        if (defaultID == null) defaultID = ""; // Empty
-        PancakeItemContainer<?> itemContainer = getItemContainer(defaultID);
+        PancakeItemContainer<?> itemContainer = (defaultID == null ? null : getItemContainer(defaultID));
         if (itemContainer == null && handlerAnnotation.id().isEmpty()) {
             throw new IllegalArgumentException(
                     "Object is not Pancake item so ID of " +
@@ -271,8 +324,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
     public void registerPancakeEnchantmentEventHandler(BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void> function,
                                                        Class<? extends PancakeItemEvent> clazz,
                                                        PancakeEnchantmentEventHandler handlerAnnotation, String defaultID, JavaPlugin plugin) {
-        if (defaultID == null) defaultID = ""; // Empty
-        PancakeEnchantmentContainer<?> enchantmentContainer = getEnchantmentContainer(defaultID);
+        PancakeEnchantmentContainer<?> enchantmentContainer = (defaultID == null ? null : getEnchantmentContainer(defaultID));
         if (enchantmentContainer == null && handlerAnnotation.id().isEmpty()) {
             throw new IllegalArgumentException(
                     "Object is not Pancake enchantment so ID of " +

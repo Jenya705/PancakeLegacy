@@ -10,6 +10,7 @@ import com.github.jenya705.pancake.event.armorequip.ArmorEquipRegisterUtils;
 import com.github.jenya705.pancake.item.PancakeBukkitItemListener;
 import com.github.jenya705.pancake.item.model.CustomModelDataContainer;
 import com.github.jenya705.pancake.item.model.CustomModelDataContainerImpl;
+import com.github.jenya705.pancake.resourcepack.ResourcePack;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 @Setter(AccessLevel.PROTECTED)
 @Getter
@@ -39,6 +42,9 @@ public final class Pancake extends JavaPlugin {
     // Register
     private PancakeRegister register;
 
+    // Resource pack
+    private ResourcePack resourcePack;
+
     @Override
     @SneakyThrows
     public void onLoad() {
@@ -47,10 +53,12 @@ public final class Pancake extends JavaPlugin {
         setDataFactory(new PancakeDataFactoryImpl());
         setRegister(new PancakeRegisterImpl());
         setCustomModelDataContainer(new CustomModelDataContainerImpl());
+        setResourcePack(ResourcePack.of(new File(getDataFolder(), "resource_pack")));
     }
 
     @Override
     public void onEnable() {
+        getResourcePack().meta(6, "Pancake plugin resource pack");
         registerCommand("give", new CommandGive());
         registerCommand("enchant", new CommandEnchant());
         ArmorEquipRegisterUtils.enable();

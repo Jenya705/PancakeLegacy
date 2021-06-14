@@ -180,4 +180,9 @@ public class InvisibleCloakItem implements Listener, PancakeItemListener, Pancak
         data.set("loseEffectCloakMessage", getLoseEffectCloakMessage());
         data.set("enableEffectCloakMessage", getEnableEffectCloakMessage());
     }
+
+    @Override
+    public String getModelName() {
+        return "pancake_invisible_cloak";
+    }
 }

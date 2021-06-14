@@ -6,24 +6,60 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 
-@AllArgsConstructor
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class ResourcePackImpl implements ResourcePack {
 
     private File namespaceFolder;
 
+    public ResourcePackImpl(File namespaceFolder) {
+        setNamespaceFolder(new File(namespaceFolder, "/assets/minecraft"));
+        try {
+            getNamespaceFolder().delete();
+            createDirectories(
+                    ".", "blockstates", "font", "icons",
+                    "lang", "models", "models/block", "models/item",
+                    "particles", "sounds", "shaders", "shaders/post",
+                    "shaders/program", "texts", "textures"
+            );
+            for (ResourcePackTextureType type : ResourcePackTextureType.values()) {
+                createDirectories("textures/" + type.getDirectory());
+            }
+            for (ResourcePackGui type: ResourcePackGui.values()) {
+                createDirectories("textures/gui/" + type.getDirectory());
+            }
+            for (EntityType entityType: EntityType.values()) {
+                createDirectories("textures/entity/" + entityType.name().toLowerCase(Locale.ROOT));
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    protected void createDirectories(String... dirs) throws IOException {
+        for (String dir: dirs) {
+            File file = new File(getNamespaceFolder(), dir);
+            Files.createDirectories(file.toPath());
+        }
+    }
+
+    @Override
+    public String getNamespace() {
+        return getNamespaceFolder().getName();
+    }
+
     @Override
     @SneakyThrows
     public ResourcePack add(String fileDirectory, byte[] bytes) {
         File file = new File(namespaceFolder, fileDirectory);
         if (!file.exists()) {
-            Files.createFile(file.toPath());
+            file.createNewFile();
         }
         Files.write(file.toPath(), bytes, StandardOpenOption.WRITE);
         return this;
@@ -31,7 +67,7 @@ public class ResourcePackImpl implements ResourcePack {
 
     @Override
     public ResourcePack meta(int packVersion, String description) {
-        return add("./../pack.mcmeta",
+        return add("../../pack.mcmeta",
                 String.format("""
                         {
                             "pack": {
@@ -46,7 +82,7 @@ public class ResourcePackImpl implements ResourcePack {
 
     @Override
     public ResourcePack meta(int packVersion, Component description) {
-        return add("./../pack.mcmeta",
+        return add("../../pack.mcmeta",
                 String.format("""
                         {
                             "pack": {

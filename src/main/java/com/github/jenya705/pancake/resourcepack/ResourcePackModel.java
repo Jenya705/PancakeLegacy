@@ -18,4 +18,9 @@ public interface ResourcePackModel {
 
     List<ResourcePackModelOverride> getOverrides();
 
+    /**
+     * @return Object as json map (String, Object)
+     */
+    Map<String, Object> asMap();
+
 }

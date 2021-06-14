@@ -70,5 +70,5 @@ dependencies {
 
 processResources {
     from "src/main"
-    filter ReplaceTokens, tokens: [version: version, pack_format: "7"]
+    filter ReplaceTokens, tokens: [version: version, pack_format: "6"]
 }
