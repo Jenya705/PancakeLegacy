@@ -111,9 +111,10 @@ public class ArmorListener implements Listener{
 	
 	@EventHandler(priority =  EventPriority.HIGHEST)
 	public void playerInteractEvent(PlayerInteractEvent e){
-		if(e.useItemInHand().equals(Result.DENY))return;
-		if(e.getAction() == Action.PHYSICAL) return;
-		if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
+		if(e.useItemInHand().equals(Result.DENY) ||
+				e.getAction() == Action.PHYSICAL ||
+				(e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+		) return;
 			Player player = e.getPlayer();
 			if(!e.useInteractedBlock().equals(Result.DENY) // Pancake - if optimization
 					&& e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && !player.isSneaking()){// Having both of these checks is useless, might as well do it though.
@@ -149,7 +150,7 @@ public class ArmorListener implements Listener{
 					player.updateInventory();
 				}
 			}
-		}
+
 	}
 	
 	@EventHandler(priority =  EventPriority.HIGHEST, ignoreCancelled = true)

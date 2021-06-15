@@ -5,6 +5,7 @@ import com.github.jenya705.pancake.data.PancakeDataType;
 import com.github.jenya705.pancake.enchantment.*;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
 import com.github.jenya705.pancake.resourcepack.ResourcePackModel;
 import com.github.jenya705.pancake.resourcepack.ResourcePackModelImpl;
@@ -87,7 +88,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
                 plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while trying to load enchant:", e);
             }
         });
-        applyCustomModels(plugin);
     }
 
     public void applyCustomModels(JavaPlugin plugin) {
@@ -106,7 +106,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
             else {
                 builder = materialBuilders.get(itemContainer.getMaterial());
             }
-            customModelItem.apply(builder, itemContainer.getCustomModelData());
+            customModelItem.apply(builder, itemContainer, itemContainer.getCustomModelData());
             pancake.getResourcePack().model(ResourcePackModelType.ITEM, customModelItem.getModelName() + ".json",
                     gson.toJson(
                             ResourcePackModel.builder()
@@ -120,7 +120,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                 pancake.getResourcePack().texture(
                         ResourcePackTextureType.ITEM,
                         customModelItem.getModelName() + ".png",
-                        plugin.getResource(customModelItem.getModelName() + ".png").readAllBytes()
+                        plugin.getResource("assets/" + customModelItem.getModelName() + ".png").readAllBytes()
                 );
             } catch (IOException | NullPointerException e) {
                 plugin.getLogger().log(Level.WARNING, "Exception while loading texture of item:", e);
@@ -135,6 +135,16 @@ public class PancakeRegisterImpl implements PancakeRegister {
                     )
             )
         );
+    }
+
+    @Override
+    public void registerItemModel(CustomModelItem customModelItem, PancakeItemContainer<?> itemContainer, JavaPlugin plugin) {
+        Pancake.getPlugin().getResourcePackRegister().registerItemModel(customModelItem, itemContainer, plugin);
+    }
+
+    @Override
+    public void registerArmorModel(CustomModelArmor customModelArmor, PancakeItemContainer<?> itemContainer, JavaPlugin plugin) {
+        Pancake.getPlugin().getResourcePackRegister().registerArmorModel(customModelArmor, itemContainer, plugin);
     }
 
     protected void registerOneElement(Object source, String id, PancakeItemContainer<?> itemContainer, PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
@@ -236,7 +246,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                                     try {
                                         method.invoke(listener, event);
                                     } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                        throw new PancakeEventHandlerException(e);
                                     }
                                 },
                                 (Class<? extends PancakeItemEvent>) types[0],
@@ -277,7 +287,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
                                     try {
                                         method.invoke(listener, event, enchantmentObject);
                                     } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                        throw new PancakeEventHandlerException(e);
                                     }
                                     return null;
                                 },

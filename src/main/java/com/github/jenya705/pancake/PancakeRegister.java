@@ -6,6 +6,8 @@ import com.github.jenya705.pancake.item.PancakeItemContainer;
 import com.github.jenya705.pancake.item.PancakeItemEventHandler;
 import com.github.jenya705.pancake.item.PancakeItemListener;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelArmor;
+import com.github.jenya705.pancake.item.model.CustomModelItem;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -47,9 +49,28 @@ public interface PancakeRegister {
 
     /**
      *
+     * Add to resource pack item model
+     *
+     * @param customModelItem Custom model item
+     * @param itemContainer Item container
+     * @param plugin Owner of model
+     */
+    void registerItemModel(CustomModelItem customModelItem, PancakeItemContainer<?> itemContainer, JavaPlugin plugin);
+
+    /**
+     *
+     * Add to resource pack armor model
+     *
+     * @param customModelArmor Custom model armor
+     * @param itemContainer Item container
+     * @param plugin Owner of model
+     */
+    void registerArmorModel(CustomModelArmor customModelArmor, PancakeItemContainer<?> itemContainer, JavaPlugin plugin);
+
+    /**
+     *
      * Register item.
      * If item is instance of {@link PancakeConfigurable} it will load and save it automatically
-     * If item is instance of {@link com.github.jenya705.pancake.item.model.CustomModelItem} it will register it
      *
      * @param item Object with {@link PancakeItem} annotation
      * @param plugin Item owner
@@ -61,7 +82,6 @@ public interface PancakeRegister {
      *
      * Register item.
      * If item is instance of {@link PancakeConfigurable} it will load and save it automatically
-     * If item is instance of {@link com.github.jenya705.pancake.item.model.CustomModelItem} it will register it
      *
      * @param item Source object
      * @param annotation Item annotation

@@ -1,5 +1,6 @@
 package com.github.jenya705.pancake.resourcepack;
 
+import com.github.jenya705.pancake.resourcepack.optifine.OptifineResourcePack;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.EntityType;
 
@@ -17,6 +18,11 @@ public interface ResourcePack {
     static ResourcePack of(File namespaceFile) {
         return new ResourcePackImpl(namespaceFile);
     }
+
+    /**
+     * @return Optifine resource pack builder
+     */
+    OptifineResourcePack optifine();
 
     /**
      * @return namespace of resource pack

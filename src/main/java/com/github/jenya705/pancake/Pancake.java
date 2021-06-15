@@ -41,6 +41,7 @@ public final class Pancake extends JavaPlugin {
 
     // Register
     private PancakeRegister register;
+    private ResourcePackRegister resourcePackRegister;
 
     // Resource pack
     private ResourcePack resourcePack;

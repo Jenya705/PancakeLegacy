@@ -1,4 +1,4 @@
-package com.github.jenya705.pancake;
+package com.github.jenya705.pancake.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;

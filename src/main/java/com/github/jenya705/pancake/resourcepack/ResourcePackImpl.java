@@ -1,5 +1,6 @@
 package com.github.jenya705.pancake.resourcepack;
 
+import com.github.jenya705.pancake.resourcepack.optifine.OptifineResourcePack;
 import lombok.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -47,6 +48,11 @@ public class ResourcePackImpl implements ResourcePack {
             File file = new File(getNamespaceFolder(), dir);
             Files.createDirectories(file.toPath());
         }
+    }
+
+    @Override
+    public OptifineResourcePack optifine() {
+        return OptifineResourcePack.of(getNamespaceFolder());
     }
 
     @Override
