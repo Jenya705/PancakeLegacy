@@ -1,7 +1,10 @@
 package com.github.jenya705.pancake.resourcepack;
 
 import com.github.jenya705.pancake.resourcepack.optifine.OptifineResourcePack;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.EntityType;

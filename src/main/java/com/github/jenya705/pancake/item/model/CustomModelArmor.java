@@ -29,6 +29,13 @@ public interface CustomModelArmor {
     boolean isLayer2();
 
     /**
+     * @return is automatically loading textures from plugin
+     */
+    default boolean isLoadArmorTextures() {
+        return true;
+    }
+
+    /**
      *
      * Apply model armor
      *

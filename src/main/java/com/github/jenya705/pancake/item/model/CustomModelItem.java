@@ -12,6 +12,13 @@ public interface CustomModelItem {
     String getModelName();
 
     /**
+     * @return is automatically loading textures from plugin
+     */
+    default boolean isLoadItemTextures() {
+        return true;
+    }
+
+    /**
      *
      * Apply Custom model (by default just write by default custom_model_data)
      *

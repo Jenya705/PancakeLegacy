@@ -55,14 +55,16 @@ public class ResourcePackRegisterImpl implements ResourcePackRegister {
                                 .asMap()
                 )
         );
-        try {
-            pancake.getResourcePack().texture(
-                    ResourcePackTextureType.ITEM,
-                    customModelItem.getModelName() + ".png",
-                    plugin.getResource("assets/" + customModelItem.getModelName() + ".png").readAllBytes()
-            );
-        } catch (IOException | NullPointerException e) {
-            plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while loading texture of item:", e);
+        if (customModelItem.isLoadItemTextures()) {
+            try {
+                pancake.getResourcePack().texture(
+                        ResourcePackTextureType.ITEM,
+                        customModelItem.getModelName() + ".png",
+                        plugin.getResource("assets/" + customModelItem.getModelName() + ".png").readAllBytes()
+                );
+            } catch (IOException | NullPointerException e) {
+                plugin.getLogger().log(Level.WARNING, "[Pancake] Exception while loading texture of item:", e);
+            }
         }
         pancake.getResourcePack().model(
                 ResourcePackModelType.ITEM,
@@ -78,11 +80,13 @@ public class ResourcePackRegisterImpl implements ResourcePackRegister {
         Pancake pancake = Pancake.getPlugin();
         OptifineResourcePack optifineResourcePack = pancake.getResourcePack().optifine();
         customModelArmor.apply(optifineResourcePack, itemContainer, itemContainer.getCustomModelData());
-        if (customModelArmor.isLayer1()) {
-            loadLayer(customModelArmor, optifineResourcePack, 1, plugin);
-        }
-        if (customModelArmor.isLayer2()) {
-            loadLayer(customModelArmor, optifineResourcePack, 2, plugin);
+        if (customModelArmor.isLoadArmorTextures()) {
+            if (customModelArmor.isLayer1()) {
+                loadLayer(customModelArmor, optifineResourcePack, 1, plugin);
+            }
+            if (customModelArmor.isLayer2()) {
+                loadLayer(customModelArmor, optifineResourcePack, 2, plugin);
+            }
         }
     }
 
