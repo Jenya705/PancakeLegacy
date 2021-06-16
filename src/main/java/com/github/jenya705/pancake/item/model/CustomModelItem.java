@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake.item.model;
 
 import com.github.jenya705.pancake.item.PancakeItemContainer;
-import com.github.jenya705.pancake.resourcepack.ResourcePackModelImpl;
+import com.github.jenya705.pancake.resourcepack.ResourcePackModel;
 import com.github.jenya705.pancake.resourcepack.ResourcePackModelOverride;
 
 public interface CustomModelItem {
@@ -19,8 +19,8 @@ public interface CustomModelItem {
      * @param itemContainer Container of this item
      * @param customModelData Custom model data of this item
      */
-    default void apply(ResourcePackModelImpl.ResourcePackModelImplBuilder builder, PancakeItemContainer<?> itemContainer, int customModelData) {
-        builder.override(ResourcePackModelOverride.builder()
+    default void apply(ResourcePackModel builder, PancakeItemContainer<?> itemContainer, int customModelData) {
+        builder.getOverrides().add(ResourcePackModelOverride.builder()
                 .predicate("custom_model_data", customModelData)
                 .model("item/" + getModelName())
                 .build()

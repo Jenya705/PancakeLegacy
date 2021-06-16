@@ -23,6 +23,11 @@ public class PropertiesBuilder {
         return properties;
     }
 
+    public PropertiesBuilder property(boolean condition, String key, String value) {
+        if (condition) return property(key, value);
+        return this;
+    }
+
     public PropertiesBuilder properties(Properties properties) {
         setProperties(properties);
         return this;

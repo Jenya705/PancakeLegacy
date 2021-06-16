@@ -13,6 +13,7 @@ import com.github.jenya705.pancake.PancakeMessage;
 import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.ArmorEquipItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,7 +41,7 @@ import java.util.logging.Level;
 )
 @Getter
 @Setter(AccessLevel.PROTECTED)
-public class InvisibleCloakItem implements Listener, PancakeItemListener, PancakeConfigurable, CustomModelItem {
+public class InvisibleCloakItem implements Listener, PancakeItemListener, PancakeConfigurable, CustomModelItem, CustomModelArmor {
 
     public static final String id = "pancake:invisible_cloak";
 
@@ -184,5 +185,20 @@ public class InvisibleCloakItem implements Listener, PancakeItemListener, Pancak
     @Override
     public String getModelName() {
         return "pancake_invisible_cloak";
+    }
+
+    @Override
+    public String getArmorMaterial() {
+        return "leather";
+    }
+
+    @Override
+    public boolean isLayer1() {
+        return true; // Chestplate is layer_1
+    }
+
+    @Override
+    public boolean isLayer2() {
+        return false;
     }
 }

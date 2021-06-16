@@ -14,6 +14,21 @@ public interface CustomModelArmor {
     String getModelName();
 
     /**
+     * @return Armor material (e.g. diamond, iron and etc.)
+     */
+    String getArmorMaterial();
+
+    /**
+     * @return is layer 1 included in .properties file
+     */
+    boolean isLayer1();
+
+    /**
+     * @return is layer 2 include in .properties file
+     */
+    boolean isLayer2();
+
+    /**
      *
      * Apply model armor
      *
@@ -27,7 +42,8 @@ public interface CustomModelArmor {
                 PropertiesBuilder.of()
                         .property("type", "armor")
                         .property("items", itemContainer.getMaterial().name().toLowerCase(Locale.ROOT))
-                        .property("texture", getModelName())
+                        .property(isLayer1(), "texture." + getArmorMaterial() + "_layer_1", getModelName() + "_layer_1")
+                        .property(isLayer2(), "texture." + getArmorMaterial() + "_layer_2", getModelName() + "_layer_2")
                         .property("nbt.CustomModelData", Integer.toString(customModelData))
                         .build()
         );

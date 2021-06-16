@@ -53,6 +53,7 @@ public final class Pancake extends JavaPlugin {
         setProtocolManager(ProtocolLibrary.getProtocolManager());
         setDataFactory(new PancakeDataFactoryImpl());
         setRegister(new PancakeRegisterImpl());
+        setResourcePackRegister(new ResourcePackRegisterImpl());
         setCustomModelDataContainer(new CustomModelDataContainerImpl());
         setResourcePack(ResourcePack.of(new File(getDataFolder(), "resource_pack")));
     }

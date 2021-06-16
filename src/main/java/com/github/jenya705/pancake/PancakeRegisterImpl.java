@@ -7,17 +7,12 @@ import com.github.jenya705.pancake.item.*;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
-import com.github.jenya705.pancake.resourcepack.ResourcePackModel;
-import com.github.jenya705.pancake.resourcepack.ResourcePackModelImpl;
-import com.github.jenya705.pancake.resourcepack.ResourcePackModelType;
-import com.github.jenya705.pancake.resourcepack.ResourcePackTextureType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -90,53 +85,6 @@ public class PancakeRegisterImpl implements PancakeRegister {
         });
     }
 
-    public void applyCustomModels(JavaPlugin plugin) {
-        Map<Material, ResourcePackModelImpl.ResourcePackModelImplBuilder> materialBuilders = new HashMap<>();
-        Pancake pancake = Pancake.getPlugin();
-        getItems().forEach((id, itemContainer) -> {
-            if (!(itemContainer.getSource() instanceof CustomModelItem customModelItem)) return;
-            ResourcePackModelImpl.ResourcePackModelImplBuilder builder;
-            if (!materialBuilders.containsKey(itemContainer.getMaterial())) {
-                builder = ResourcePackModel.builder();
-                builder
-                        .parent("minecraft:item/generated")
-                        .texture("layer0", "minecraft:item/" + itemContainer.getMaterial().name().toLowerCase(Locale.ROOT));
-                materialBuilders.put(itemContainer.getMaterial(), builder);
-            }
-            else {
-                builder = materialBuilders.get(itemContainer.getMaterial());
-            }
-            customModelItem.apply(builder, itemContainer, itemContainer.getCustomModelData());
-            pancake.getResourcePack().model(ResourcePackModelType.ITEM, customModelItem.getModelName() + ".json",
-                    gson.toJson(
-                            ResourcePackModel.builder()
-                                    .parent("minecraft:item/generated")
-                                    .texture("layer0", "item/" + customModelItem.getModelName())
-                                    .build()
-                                    .asMap()
-                    )
-            );
-            try {
-                pancake.getResourcePack().texture(
-                        ResourcePackTextureType.ITEM,
-                        customModelItem.getModelName() + ".png",
-                        plugin.getResource("assets/" + customModelItem.getModelName() + ".png").readAllBytes()
-                );
-            } catch (IOException | NullPointerException e) {
-                plugin.getLogger().log(Level.WARNING, "Exception while loading texture of item:", e);
-            }
-        });
-        materialBuilders.forEach((material, builder) ->
-            pancake.getResourcePack().model(ResourcePackModelType.ITEM, material.name().toLowerCase(Locale.ROOT) + ".json",
-                    gson.toJson(
-                            builder
-                                    .build()
-                                    .asMap()
-                    )
-            )
-        );
-    }
-
     @Override
     public void registerItemModel(CustomModelItem customModelItem, PancakeItemContainer<?> itemContainer, JavaPlugin plugin) {
         Pancake.getPlugin().getResourcePackRegister().registerItemModel(customModelItem, itemContainer, plugin);
@@ -156,6 +104,12 @@ public class PancakeRegisterImpl implements PancakeRegister {
         }
         if (source instanceof PancakeEnchantmentListener) {
             registerPancakeEnchantmentListener((PancakeEnchantmentListener) source, enchantmentContainer == null ? null : enchantmentContainer.getId(), plugin);
+        }
+        if (source instanceof CustomModelItem) {
+            registerItemModel((CustomModelItem) source, itemContainer, plugin);
+        }
+        if (source instanceof CustomModelArmor) {
+            registerArmorModel((CustomModelArmor) source, itemContainer, plugin);
         }
     }
 
