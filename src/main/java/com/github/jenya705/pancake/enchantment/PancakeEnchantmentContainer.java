@@ -17,6 +17,18 @@ public interface PancakeEnchantmentContainer<T> {
 
     EnchantmentRarity getRarity();
 
+    /**
+     * @param enchantmentID Enchantment id
+     * @return is that enchantment is conflicts with this enchantment
+     */
+    boolean isConflict(String enchantmentID);
+
+    boolean isTreasure();
+
+    boolean isTradeable();
+
+    boolean isDiscoverable();
+
     T getSource();
 
     int getMaxLevel();

@@ -35,7 +35,14 @@ public class PancakeItemBuilder {
         return this;
     }
 
+    /**
+     * @throws IllegalStateException if required fields did not set or null
+     * @return build {@link PancakeItem} annotation
+     */
     public PancakeItem build() {
+        if (getName() == null || getId() == null || getMaterial() == null) {
+            throw new IllegalStateException("name, id or material are null");
+        }
         return new PancakeItem() {
             @Override
             public Class<? extends Annotation> annotationType() {

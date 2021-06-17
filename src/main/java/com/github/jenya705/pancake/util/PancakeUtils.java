@@ -25,4 +25,9 @@ public class PancakeUtils {
         return builder.toString();
     }
 
+    public static <T> boolean contains(T[] array, T object) {
+        for (T objectInArray: array) if (objectInArray.equals(object)) return true;
+        return false;
+    }
+
 }

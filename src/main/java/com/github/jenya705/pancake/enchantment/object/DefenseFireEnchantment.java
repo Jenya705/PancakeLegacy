@@ -12,6 +12,7 @@ import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Entity;
 
@@ -37,7 +38,7 @@ public class DefenseFireEnchantment implements PancakeEnchantmentListener, Panca
 
     @Override
     public void load(PancakeData data) {
-        setTicks(data.getInteger("fireTicks"));
+        setTicks(data.getInteger("fireTicks", getTicks()));
     }
 
     @Override

@@ -2,7 +2,7 @@ name: Pancake
 version: @version@
 main: com.github.jenya705.pancake.Pancake
 api-version: 1.16
-depend: [ ProtocolLib, NBTAPI ]
+depend: [ ProtocolLib ]
 authors: [ Jenya705 ]
 description: Plugin OWA OWA OWA Pancake
 commands:

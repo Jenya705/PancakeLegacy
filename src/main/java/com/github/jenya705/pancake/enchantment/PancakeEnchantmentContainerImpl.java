@@ -2,16 +2,14 @@ package com.github.jenya705.pancake.enchantment;
 
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
+import com.github.jenya705.pancake.util.PancakeUtils;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.enchantments.EnchantmentTarget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 @Getter
@@ -23,6 +21,10 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
     private EnchantmentTarget target;
     private EnchantmentRarity rarity;
     private int maxLevel;
+    private String[] conflicts;
+    private boolean treasure;
+    private boolean tradeable;
+    private boolean discoverable;
     private T source;
     private Map<Class<? extends PancakeItemEvent>, List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>>> handlers;
 
@@ -51,7 +53,16 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
         setTarget(pancakeEnchantment.target());
         setRarity(pancakeEnchantment.rarity());
         setMaxLevel(pancakeEnchantment.maxLevel());
+        setConflicts(pancakeEnchantment.conflicts());
+        setTreasure(pancakeEnchantment.treasure());
+        setTradeable(pancakeEnchantment.tradeable());
+        setDiscoverable(pancakeEnchantment.discoverable());
         setSource(source);
+    }
+
+    @Override
+    public boolean isConflict(String enchantmentID) {
+        return PancakeUtils.contains(getConflicts(), enchantmentID);
     }
 
     @Override
