@@ -12,7 +12,6 @@ import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Entity;
 
@@ -21,6 +20,7 @@ import org.bukkit.entity.Entity;
         name = "Defense fire",
         target = EnchantmentTarget.ARMOR,
         rarity = EnchantmentRarity.RARE,
+        conflicts = {"minecraft:fire_protection"},
         maxLevel = 3
 )
 @Getter
