@@ -12,6 +12,9 @@ public interface PancakeNMS {
     int itemCMethod(ItemStack itemStack);
 
     /**
+     *
+     * Method - getMinCost()
+     *
      * @param level Level
      * @param enchantment enchantment
      * @return Result of method a(Integer) of nms enchantment
@@ -19,6 +22,9 @@ public interface PancakeNMS {
     int enchantmentAMethodInteger(Enchantment enchantment, int level);
 
     /**
+     *
+     * Method - getMaxCost()
+     *
      * @param level Level
      * @param enchantment enchantment
      * @return Result of method b(Integer) of nms enchantment
