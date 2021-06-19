@@ -164,11 +164,12 @@ public class PancakeEnchantmentWeightContainerImpl implements PancakeEnchantment
                         (enchantmentContainer.canApply(pancakeItemStack) || itemStack.getType() == Material.BOOK)
         );
         if (!possibleEnchantments.isEmpty()) {
-            result.add(getRandomDependOnWeight(localRandom, possibleEnchantments));
+            Pair<PancakeEnchantmentContainer<?>, Integer> chosenEnchantment;
+            result.add(chosenEnchantment = getRandomDependOnWeight(localRandom, possibleEnchantments));
             while (localRandom.nextInt(50) <= newerCost) {
-                validateConflicts(possibleEnchantments, possibleEnchantments.get(possibleEnchantments.size()-1));
+                validateConflicts(possibleEnchantments, chosenEnchantment);
                 if (possibleEnchantments.isEmpty()) break;
-                result.add(getRandomDependOnWeight(localRandom, possibleEnchantments));
+                result.add(chosenEnchantment = getRandomDependOnWeight(localRandom, possibleEnchantments));
                 newerCost/=2;
             }
         }
