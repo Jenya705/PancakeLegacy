@@ -31,6 +31,10 @@ tasks.named("processResources").configure() {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+test {
+    useJUnitPlatform()
+}
+
 repositories {
     maven {
         name = 'papermc-repo'
@@ -53,11 +57,16 @@ repositories {
         name = "jitpack"
         url = 'https://jitpack.io'
     } // JitPack
+    maven {
+        name = "Spigot"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT' // PaperMC
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.6.0' // ProtocolLib
+    compileOnly 'org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT' // Spigot (for NMS)
     implementation 'de.tr7zw:item-nbt-api:2.7.1' // NBTApi
     implementation 'org.reflections:reflections:0.9.12' // Reflections
     /* Lombok */
@@ -66,6 +75,11 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
     /* Lombok */
+    /* JUnit */
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    /* JUnit */
+    testImplementation 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 }
 
 processResources {

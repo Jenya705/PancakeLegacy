@@ -7,6 +7,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -38,6 +39,11 @@ public @interface PancakeEnchantment {
     int maxLevel() default 1;
 
     /**
+     * @return Start level of enchantment
+     */
+    int startLevel() default 1;
+
+    /**
      * @return Enchantments conflicts
      */
     String[] conflicts() default {};
@@ -61,5 +67,6 @@ public @interface PancakeEnchantment {
      * @return true if the enchantment is a treasure enchantment
      */
     boolean treasure() default true;
+
 
 }

@@ -5,7 +5,7 @@ import com.github.jenya705.pancake.item.PancakeItemStack;
 public interface PancakeEnchantmentObject {
 
     /**
-     * @return {@link PancakeEnchantmentContainer} of enchantment
+     * @return {@link PancakeEnchantmentContainer} (maybe {@link BukkitPancakeEnchantmentContainer} of enchantment
      */
     PancakeEnchantmentContainer<?> getEnchantmentContainer();
 

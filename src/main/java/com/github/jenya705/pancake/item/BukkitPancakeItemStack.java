@@ -26,7 +26,7 @@ public class BukkitPancakeItemStack implements PancakeItemStack {
         setBukkit(bukkit);
         if (!PancakeItemUtils.isItemNone(bukkit)){
             setNbt(new NBTItem(bukkit));
-            setEnchantments(PancakeEnchantmentUtils.getEnchantments(getNbt(), this));
+            setEnchantments(PancakeEnchantmentUtils.getEnchantments(this));
         }
         else {
             setEnchantments(Collections.emptyList());
@@ -36,7 +36,7 @@ public class BukkitPancakeItemStack implements PancakeItemStack {
 
     @Override
     public PancakeItemContainer<?> getItemContainer() {
-        return null;
+        return new BukkitPancakeItemContainer(bukkit);
     }
 
     @Override

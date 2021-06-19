@@ -1,6 +1,7 @@
 package com.github.jenya705.pancake.enchantment;
 
 import com.github.jenya705.pancake.item.PancakeItemSource;
+import com.github.jenya705.pancake.item.PancakeItemStack;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.util.PancakeUtils;
 import io.papermc.paper.enchantments.EnchantmentRarity;
@@ -24,12 +25,14 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
     private EnchantmentTarget target;
     private EnchantmentRarity rarity;
     private int maxLevel;
+    private int startLevel;
     private String[] conflicts;
     private boolean treasure;
     private boolean tradeable;
     private boolean discoverable;
     private T source;
     private Map<Class<? extends PancakeItemEvent>, List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>>> handlers;
+    private PancakeEnchantmentWrapper wrapper;
 
     /**
      * @param source Source object
@@ -56,16 +59,33 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
         setTarget(pancakeEnchantment.target());
         setRarity(pancakeEnchantment.rarity());
         setMaxLevel(pancakeEnchantment.maxLevel());
+        setStartLevel(pancakeEnchantment.startLevel());
         setConflicts(pancakeEnchantment.conflicts());
         setTreasure(pancakeEnchantment.treasure());
         setTradeable(pancakeEnchantment.tradeable());
         setDiscoverable(pancakeEnchantment.discoverable());
         setSource(source);
+        setWrapper(new PancakeEnchantmentWrapper(this));
     }
 
     @Override
     public boolean isConflict(String enchantmentID) {
         return PancakeUtils.contains(getConflicts(), enchantmentID);
+    }
+
+    @Override
+    public boolean canApply(PancakeItemStack itemStack) {
+        return getTarget().includes(itemStack.getBukkit());
+    }
+
+    @Override
+    public int getMinCost(int level) {
+        return getSource() instanceof PancakeEnchantmentCost ? ((PancakeEnchantmentCost) getSource()).getMinCost(level) : 1 + level * 10;
+    }
+
+    @Override
+    public int getMaxCost(int level) {
+        return getSource() instanceof PancakeEnchantmentCost ? ((PancakeEnchantmentCost) getSource()).getMaxCost(level) : getMinCost(level) + 5;
     }
 
     @Override

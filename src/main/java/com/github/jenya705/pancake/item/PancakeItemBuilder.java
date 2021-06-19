@@ -17,6 +17,7 @@ public class PancakeItemBuilder {
     private String name;
     private String id;
     private Material material;
+    private int additionalEnchantmentLevel;
 
     public static PancakeItemBuilder builder() { return new PancakeItemBuilder(); }
 
@@ -32,6 +33,11 @@ public class PancakeItemBuilder {
 
     public PancakeItemBuilder material(Material material) {
         setMaterial(material);
+        return this;
+    }
+
+    public PancakeItemBuilder additionalEnchantmentLevel(int level) {
+        setAdditionalEnchantmentLevel(level);
         return this;
     }
 
@@ -62,6 +68,11 @@ public class PancakeItemBuilder {
             @Override
             public Material material() {
                 return getMaterial();
+            }
+
+            @Override
+            public int additionalEnchantmentLevel() {
+                return getAdditionalEnchantmentLevel();
             }
         };
     }

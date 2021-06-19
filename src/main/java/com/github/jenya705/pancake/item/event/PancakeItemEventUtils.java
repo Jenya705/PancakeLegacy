@@ -1,5 +1,7 @@
 package com.github.jenya705.pancake.item.event;
 
+import com.github.jenya705.pancake.enchantment.BukkitPancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentWrapper;
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import lombok.experimental.UtilityClass;
@@ -21,7 +23,7 @@ public class PancakeItemEventUtils {
         for (PancakeItemSource source: sources) {
             if (itemStack.getItemContainer() != null) itemStack.getItemContainer().invokeEvent(event, source);
             itemStack.getEnchantments().forEach(it ->
-                it.getEnchantmentContainer().invokeEvent(event, source, it)
+                    it.getEnchantmentContainer().invokeEvent(event, source, it)
             );
         }
     }

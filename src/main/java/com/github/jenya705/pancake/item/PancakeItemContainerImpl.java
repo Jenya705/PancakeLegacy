@@ -20,6 +20,7 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
     private Map<Class<? extends PancakeItemEvent>, List<List<Consumer<PancakeItemEvent>>>> handlers;
     private T source;
     private String id;
+    private int additionalEnchantmentLevel;
     private int customModelData;
 
     /**
@@ -49,8 +50,8 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
         setCustomModelData(customModelID);
         setName(pancakeItemAnnotation.name());
         setId(pancakeItemAnnotation.id().toLowerCase(Locale.ROOT));
+        setAdditionalEnchantmentLevel(pancakeItemAnnotation.additionalEnchantmentLevel());
         setMaterial(pancakeItemAnnotation.material());
-        setHandlers(new HashMap<>());
         setSource(source);
     }
 
@@ -74,26 +75,24 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
 
     @Override
     public void addHandler(Class<? extends PancakeItemEvent> event, PancakeItemSource source, Consumer<PancakeItemEvent> consumer) {
-        if (getHandlers().containsKey(event)) {
-            List<Consumer<PancakeItemEvent>> consumers = getHandlers().get(event).get(source.ordinal());
-            if (consumers == null) {
-                consumers = new ArrayList<>();
-                getHandlers().get(event).set(source.ordinal(), consumers);
-            }
-            consumers.add(consumer);
+        if (getHandlers() == null) setHandlers(new HashMap<>());
+        List<List<Consumer<PancakeItemEvent>>> sourceHandlers = getHandlers().getOrDefault(event, null);
+        if (sourceHandlers == null) {
+            sourceHandlers = new ArrayList<>(PancakeItemSource.values().length);
+            for (int i = 0; i < PancakeItemSource.values().length; ++i) sourceHandlers.add(null);
+            getHandlers().put(event, sourceHandlers);
         }
-        else {
-            List<List<Consumer<PancakeItemEvent>>> sourceConsumer = new ArrayList<>(PancakeItemSource.values().length);
-            for (int i = 0; i < PancakeItemSource.values().length; ++i) sourceConsumer.add(null);
-            List<Consumer<PancakeItemEvent>> consumers = new ArrayList<>();
-            consumers.add(consumer);
-            sourceConsumer.set(source.ordinal(), consumers);
-            getHandlers().put(event, sourceConsumer);
+        List<Consumer<PancakeItemEvent>> exactHandlers = sourceHandlers.get(source.ordinal());
+        if (exactHandlers == null) {
+            exactHandlers = new ArrayList<>();
+            sourceHandlers.set(source.ordinal(), exactHandlers);
         }
+        exactHandlers.add(consumer);
     }
 
     @Override
     public void invokeEvent(PancakeItemEvent event, PancakeItemSource source) {
+        if (getHandlers() == null) return;
         List<List<Consumer<PancakeItemEvent>>> sourceConsumers = getHandlers().getOrDefault(event.getClass(), null);
         if (sourceConsumers == null) return;
         List<Consumer<PancakeItemEvent>> consumers = sourceConsumers.get(source.ordinal());

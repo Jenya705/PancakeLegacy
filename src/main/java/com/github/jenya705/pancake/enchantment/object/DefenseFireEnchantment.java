@@ -20,6 +20,7 @@ import org.bukkit.entity.Entity;
         name = "Defense fire",
         target = EnchantmentTarget.ARMOR,
         rarity = EnchantmentRarity.RARE,
+        treasure = false,
         conflicts = {"minecraft:fire_protection"},
         maxLevel = 3
 )

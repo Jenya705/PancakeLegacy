@@ -7,9 +7,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -34,7 +37,7 @@ public class PancakeItemStackImpl implements PancakeItemStack {
         if (!getNbt().hasKey(PancakeItemUtils.pancakeType)) throw new IllegalArgumentException("ItemStack is not PancakeItemStack");
         setItemContainer(PancakeItemUtils.getItemContainer(nbt.getString(PancakeItemUtils.pancakeType)));
         setId(getItemContainer().getID());
-        setEnchantments(PancakeEnchantmentUtils.getEnchantments(getNbt(), this));
+        setEnchantments(PancakeEnchantmentUtils.getEnchantments(this));
     }
 
     public static boolean canCreate(ItemStack bukkit) {

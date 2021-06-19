@@ -24,7 +24,7 @@ public interface PancakeItemStack {
     PancakeItemContainer<?> getItemContainer();
 
     /**
-     * @return Pancake enchantments
+     * @return All Enchantment as {@link PancakeEnchantmentObject}
      */
     List<PancakeEnchantmentObject> getEnchantments();
 

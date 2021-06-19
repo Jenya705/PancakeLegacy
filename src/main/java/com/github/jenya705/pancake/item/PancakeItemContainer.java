@@ -20,6 +20,8 @@ public interface PancakeItemContainer<T> {
 
     int getCustomModelData();
 
+    int getAdditionalEnchantmentLevel();
+
     void addHandler(Class<? extends PancakeItemEvent> event, PancakeItemSource source, Consumer<PancakeItemEvent> consumer);
 
     void invokeEvent(PancakeItemEvent event, PancakeItemSource source);

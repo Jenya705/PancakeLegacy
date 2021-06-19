@@ -21,6 +21,7 @@ public class PancakeEnchantmentBuilder {
     private EnchantmentTarget target = null;
     private EnchantmentRarity rarity = EnchantmentRarity.COMMON;
     private int maxLevel = 1;
+    private int startLevel = 1;
     private String[] conflicts = new String[0];
     private boolean treasure = true;
     private boolean tradeable = true;
@@ -82,6 +83,11 @@ public class PancakeEnchantmentBuilder {
         return this;
     }
 
+    public PancakeEnchantmentBuilder startLevel(int startLevel) {
+        setStartLevel(startLevel);
+        return this;
+    }
+
     /**
      * @throws IllegalStateException if required fields did not set or null
      * @return built {@link PancakeEnchantment} annotation
@@ -134,6 +140,11 @@ public class PancakeEnchantmentBuilder {
             @Override
             public boolean treasure() {
                 return isTreasure();
+            }
+
+            @Override
+            public int startLevel() {
+                return getStartLevel();
             }
 
             @Override

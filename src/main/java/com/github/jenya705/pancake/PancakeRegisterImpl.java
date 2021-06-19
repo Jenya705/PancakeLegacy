@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -20,6 +21,7 @@ import org.reflections.Reflections;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -177,9 +179,22 @@ public class PancakeRegisterImpl implements PancakeRegister {
 
     @Override
     public void registerEnchantment(Object enchantment, PancakeEnchantment annotation, JavaPlugin plugin) {
-        getEnchantments().put(annotation.id().toLowerCase(Locale.ROOT), new PancakeEnchantmentContainerImpl<>(enchantment, annotation));
+        Pancake pancake = Pancake.getPlugin();
+        PancakeEnchantmentContainer<?> enchantmentContainer = new PancakeEnchantmentContainerImpl<>(enchantment, annotation);
+        getEnchantments().put(annotation.id().toLowerCase(Locale.ROOT), enchantmentContainer);
+        pancake.getEnchantmentWeightContainer().addEnchantmentContainer(enchantmentContainer);
         if (enchantment instanceof PancakeConfigurable) {
             configurable((PancakeConfigurable) enchantment, annotation.id(), plugin);
+        }
+        if (enchantmentContainer.getWrapper() != null) {
+            try {
+                Field acceptingNew = Enchantment.class.getDeclaredField("acceptingNew");
+                acceptingNew.setAccessible(true);
+                acceptingNew.set(null, true);
+                Enchantment.registerEnchantment(enchantmentContainer.getWrapper());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                plugin.getLogger().log(Level.SEVERE, "[Pancake] Can not register enchantment as wrapper because:", e);
+            }
         }
     }
 

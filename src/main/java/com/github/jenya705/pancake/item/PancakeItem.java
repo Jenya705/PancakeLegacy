@@ -26,4 +26,9 @@ public @interface PancakeItem {
      */
     Material material();
 
+    /**
+     * @return additional enchantment level
+     */
+    int additionalEnchantmentLevel() default 0;
+
 }
