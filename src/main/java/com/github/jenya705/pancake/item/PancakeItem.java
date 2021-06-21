@@ -12,21 +12,33 @@ import java.lang.annotation.Target;
 public @interface PancakeItem {
 
     /**
+     *
+     * Return localized name of item (e.g. Diamond ore)
+     *
      * @return Localized name of Item
      */
     String name();
 
     /**
-     * @return String id of Item, example: "minecraft:diamond_ore"
+     *
+     * Return id of item (e.g. minecraft:diamond_ore)
+     *
+     * @return id of Item (e.g. "minecraft:diamond_ore")
      */
     String id();
 
     /**
-     * @return Material which used to pretend Item
+     *
+     * Return material which used to pretend item
+     *
+     * @return Material which used to pretend item
      */
     Material material();
 
     /**
+     *
+     * Return additional enchantment level
+     *
      * @return additional enchantment level
      */
     int additionalEnchantmentLevel() default 0;

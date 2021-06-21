@@ -6,29 +6,47 @@ import com.github.jenya705.pancake.util.PropertiesBuilder;
 
 import java.util.Locale;
 
+/**
+ * Interface to generate armor model
+ */
 public interface CustomModelArmor {
 
     /**
+     *
+     * Return model name
+     *
      * @return Model name
      */
     String getModelName();
 
     /**
+     *
+     * Return armor material
+     *
      * @return Armor material (e.g. diamond, iron and etc.)
      */
     String getArmorMaterial();
 
     /**
+     *
+     * Checks if layer1 included
+     *
      * @return is layer 1 included in .properties file
      */
     boolean isLayer1();
 
     /**
+     *
+     * Checks if layer2 included
+     *
      * @return is layer 2 include in .properties file
      */
     boolean isLayer2();
 
     /**
+     *
+     * Checks if pancake need to automatically load all textures
+     *
      * @return is automatically loading textures from plugin
      */
     default boolean isLoadArmorTextures() {
@@ -39,6 +57,7 @@ public interface CustomModelArmor {
      *
      * Apply model armor
      *
+     * @implSpec creating .properties file with name {@link #getModelName()} with type, items, layer1, layer2, nbt.CustomModelData
      * @param resourcePack Optifine resource pack
      * @param itemContainer Container of this item
      * @param customModelData custom model data of this item

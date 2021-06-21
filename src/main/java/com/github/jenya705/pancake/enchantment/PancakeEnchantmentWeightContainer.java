@@ -181,7 +181,8 @@ public interface PancakeEnchantmentWeightContainer {
 
     /**
      *
-     * By default pancake implementation, returns enchantments using minecraft random algorithm
+     *
+     * Return enchantment which will be item enchanted when item enchanted in enchanting table
      *
      * @param itemStack Item stack to enchant
      * @param clickedContainer Clicked container (0 - 2)

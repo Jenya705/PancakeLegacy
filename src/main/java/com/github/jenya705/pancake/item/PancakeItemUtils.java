@@ -8,26 +8,58 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * Pancake item util functions
+ */
 @UtilityClass
 public class PancakeItemUtils {
 
     public static final String pancakeType = "pancake_type";
 
-    public static PancakeItemContainer<?> getItemContainer(String id) {
+    /**
+     *
+     * Return container of item with given id
+     *
+     * @param id id of item
+     * @return container of item with given id
+     */
+    public static PancakeItemContainer<?> getSafeItemContainer(String id) {
         Pancake pancake = Pancake.getPlugin();
         return pancake.getRegister().getItemContainer(id);
     }
 
-    public static PancakeItemContainer<?> getItemContainer(ItemStack itemStack) {
+    /**
+     *
+     * Return container of given item
+     * If item is not pancake item it will return null
+     *
+     * @param itemStack Item
+     * @return Container of given item
+     */
+    public static PancakeItemContainer<?> getSafeItemContainer(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR) return null;
         NBTItem nbt = new NBTItem(itemStack);
-        return nbt.hasKey(pancakeType) ? getItemContainer(nbt.getString(pancakeType)) : null;
+        return nbt.hasKey(pancakeType) ? getSafeItemContainer(nbt.getString(pancakeType)) : null;
     }
 
+    /**
+     *
+     * Return generated pancake item with given id
+     *
+     * @param id id of item
+     * @return generated pancake item with given id
+     */
     public static ItemStack generateItemStack(String id) {
-        return generateItemStack(getItemContainer(id));
+        return generateItemStack(getSafeItemContainer(id));
     }
 
+    /**
+     *
+     * Return generated pancake item with given item container
+     *
+     * @param itemContainer container of item
+     * @return generated pancake item with given item container
+     */
     public static ItemStack generateItemStack(PancakeItemContainer<?> itemContainer) {
         ItemStack itemStack = new ItemStack(itemContainer.getMaterial());
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -39,6 +71,13 @@ public class PancakeItemUtils {
         return nbt.getItem();
     }
 
+    /**
+     *
+     * Checks if item is none (air or null)
+     *
+     * @param item Item
+     * @return true if item is none (air or null)
+     */
     public static boolean isItemNone(ItemStack item) {
         return item == null || item.getType() == Material.AIR;
     }

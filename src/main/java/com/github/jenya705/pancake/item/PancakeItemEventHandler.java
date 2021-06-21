@@ -10,12 +10,18 @@ import java.lang.annotation.Target;
 public @interface PancakeItemEventHandler {
 
     /**
-     * @return id of listening pancake item or empty String if default
+     *
+     * Return id of listening pancake item or empty if default
+     *
+     * @return id of listening pancake item or empty if default
      */
     String id() default ""; // empty
 
     /**
-     * @return if object is from this source, event handler will be invoked
+     *
+     * Return source of item when handler will be invoked
+     *
+     * @return source of item when handler will be invoked
      */
     PancakeItemSource source() default PancakeItemSource.MAIN;
 }

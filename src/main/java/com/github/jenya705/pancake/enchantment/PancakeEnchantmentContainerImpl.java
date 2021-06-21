@@ -90,6 +90,9 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
 
     @Override
     public void invokeEvent(PancakeItemEvent event, PancakeItemSource source, PancakeEnchantmentObject enchantmentObject) {
+        if (enchantmentObject.getEnchantmentContainer() != this) {
+            throw new IllegalArgumentException("This container is not container of given enchantment object");
+        }
         if (getHandlers() == null) return;
         List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>> sourceHandlers = getHandlers().getOrDefault(event.getClass(), null);
         if (sourceHandlers == null) return;

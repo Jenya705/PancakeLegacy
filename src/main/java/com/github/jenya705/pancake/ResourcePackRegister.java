@@ -5,6 +5,9 @@ import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Register of all resource pack objects
+ */
 public interface ResourcePackRegister {
 
     /**

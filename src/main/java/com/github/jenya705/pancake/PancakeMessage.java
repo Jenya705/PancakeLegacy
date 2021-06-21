@@ -1,5 +1,8 @@
 package com.github.jenya705.pancake;
 
+/**
+ * Minecraft legacy message object
+ */
 public interface PancakeMessage {
 
     /**

@@ -6,9 +6,19 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
+/**
+ * Item event util functions
+ */
 @UtilityClass
 public class PancakeItemEventUtils {
 
+    /**
+     *
+     * Invoking all event sources
+     *
+     * @param event Event which will be invoked
+     * @param player Player
+     */
     public static void invokeEvent(PancakeItemEvent event, Player player) {
         if (event.getItemStack() != null) {
             invokeItemEvent(event.getItemStack(), event, PancakeItemSource.MAIN);
@@ -16,6 +26,14 @@ public class PancakeItemEventUtils {
         if (player != null) invokeNotMainSources(player.getInventory(), event);
     }
 
+    /**
+     *
+     * Invoke only event with given sources
+     *
+     * @param itemStack Item
+     * @param event Event
+     * @param sources Sources
+     */
     public static void invokeItemEvent(PancakeItemStack itemStack, PancakeItemEvent event, PancakeItemSource... sources) {
         if (itemStack == null || event == null) return;
         for (PancakeItemSource source: sources) {
@@ -26,6 +44,13 @@ public class PancakeItemEventUtils {
         }
     }
 
+    /**
+     *
+     * Invoke event with all sources without main source
+     *
+     * @param playerInventory Player Inventory
+     * @param event Event
+     */
     public static void invokeNotMainSources(PlayerInventory playerInventory, PancakeItemEvent event) {
         // Armor
         invokeItemEvent(PancakeItemStack.of(playerInventory.getHelmet()), event, PancakeItemSource.HELMET, PancakeItemSource.ARMOR);

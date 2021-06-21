@@ -315,7 +315,7 @@ public interface PancakeData {
 
     /**
      *
-     * Returns bytes representation of data
+     * Return bytes representation of data
      *
      * @return Bytes representation of data
      */

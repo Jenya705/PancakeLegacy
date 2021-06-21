@@ -12,6 +12,9 @@ import java.io.File;
 public interface ResourcePack {
 
     /**
+     *
+     * Return resource pack object
+     *
      * @param namespaceFile Namespace File
      * @return Resource pack implementation (automatic add files)
      */
@@ -20,11 +23,17 @@ public interface ResourcePack {
     }
 
     /**
+     *
+     * Return optifine resource pack builder
+     *
      * @return Optifine resource pack builder
      */
     OptifineResourcePack optifine();
 
     /**
+     *
+     * Return namespace of this resource pack
+     *
      * @return namespace of resource pack
      */
     String getNamespace();

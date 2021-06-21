@@ -2,6 +2,9 @@ package com.github.jenya705.pancake;
 
 import com.github.jenya705.pancake.data.PancakeData;
 
+/**
+ * Interface which says that object is configurable
+ */
 public interface PancakeConfigurable {
 
     /**

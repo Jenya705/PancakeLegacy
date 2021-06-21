@@ -14,26 +14,41 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+/**
+ * Register of all pancake objects
+ */
 public interface PancakeRegister {
 
     /**
+     *
+     * Return container of pancake item
+     *
      * @param id ID of item
      * @return {@link PancakeItemContainer} of pancake item
      */
     PancakeItemContainer<?> getItemContainer(String id);
 
     /**
+     *
+     * Return container of pancake enchantment
+     *
      * @param id ID of enchantment
      * @return {@link PancakeEnchantmentContainer} of pancake enchantment
      */
     PancakeEnchantmentContainer<?> getEnchantmentContainer(String id);
 
     /**
+     *
+     * Return item names
+     *
      * @return Pancake item names
      */
     List<String> getItemNames();
 
     /**
+     *
+     * Return enchantment names
+     *
      * @return Pancake enchantment names
      */
     List<String> getEnchantmentNames();

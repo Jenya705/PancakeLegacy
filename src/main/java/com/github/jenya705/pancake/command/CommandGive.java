@@ -38,7 +38,7 @@ public class CommandGive implements CommandExecutor, TabExecutor {
         else {
             count = 1;
         }
-        PancakeItemContainer<?> itemContainer = PancakeItemUtils.getItemContainer(itemString);
+        PancakeItemContainer<?> itemContainer = PancakeItemUtils.getSafeItemContainer(itemString);
         if (itemContainer == null) {
             sender.sendMessage(ChatColor.RED + String.format("Pancake item with id %s is not exist", itemString));
             return true;
