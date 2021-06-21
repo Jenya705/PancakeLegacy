@@ -151,7 +151,7 @@ public class PancakeEnchantmentWeightContainerImpl implements PancakeEnchantment
     protected List<Pair<PancakeEnchantmentContainer<?>, Integer>> enchantmentManagerB(ItemStack itemStack, int cost) { // Flag is false
         List<Pair<PancakeEnchantmentContainer<?>, Integer>> result = new ArrayList<>();
         PancakeItemStack pancakeItemStack = PancakeItemStack.of(itemStack);
-        int additionalLevel = pancakeItemStack.getItemContainer().getAdditionalEnchantmentLevel();
+        int additionalLevel = pancakeItemStack.getItemContainer().getAdditionalEnchantmentCost();
         if (additionalLevel <= 0) return result;
         int newerCost = cost + 1 + localRandom.nextInt(additionalLevel / 4 + 1) + localRandom.nextInt(additionalLevel / 4 + 1);
         float f = (localRandom.nextFloat() + localRandom.nextFloat() - 1f) * 0.15f;

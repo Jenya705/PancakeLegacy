@@ -59,7 +59,7 @@ public interface PancakeItemContainer<T> {
      *
      * @return additional enchantment level
      */
-    int getAdditionalEnchantmentLevel();
+    int getAdditionalEnchantmentCost();
 
     /**
      *

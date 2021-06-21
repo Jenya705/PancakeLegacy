@@ -55,14 +55,15 @@ public class PancakeEnchantmentWrapper extends Enchantment {
     }
 
     @Override
-    @Deprecated
     public boolean isCursed() {
         return false;
     }
 
     @Override
     public boolean conflictsWith(@NotNull Enchantment other) {
-        return getEnchantmentContainer().isConflict(other.getKey().getNamespace());
+        return getEnchantmentContainer().isConflict(other.getKey().getNamespace()) &&
+                (!(other instanceof PancakeEnchantmentWrapper) || ((PancakeEnchantmentWrapper) other).getEnchantmentContainer()
+                        .isConflict(getEnchantmentContainer().getId()));
     }
 
     @Override

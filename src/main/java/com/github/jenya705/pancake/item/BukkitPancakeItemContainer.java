@@ -45,7 +45,7 @@ public class BukkitPancakeItemContainer implements PancakeItemContainer<Void> {
     }
 
     @Override
-    public int getAdditionalEnchantmentLevel() {
+    public int getAdditionalEnchantmentCost() {
         return Pancake.getPlugin().getNms().itemCMethod(itemStack);
     }
 

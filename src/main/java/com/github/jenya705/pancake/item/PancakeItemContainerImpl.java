@@ -20,7 +20,7 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
     private Map<Class<? extends PancakeItemEvent>, List<List<Consumer<PancakeItemEvent>>>> handlers;
     private T source;
     private String id;
-    private int additionalEnchantmentLevel;
+    private int additionalEnchantmentCost;
     private int customModelData;
 
     /**
@@ -50,7 +50,7 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
         setCustomModelData(customModelID);
         setName(pancakeItemAnnotation.name());
         setId(pancakeItemAnnotation.id().toLowerCase(Locale.ROOT));
-        setAdditionalEnchantmentLevel(pancakeItemAnnotation.additionalEnchantmentLevel());
+        setAdditionalEnchantmentCost(pancakeItemAnnotation.additionalEnchantmentCost());
         setMaterial(pancakeItemAnnotation.material());
         setSource(source);
     }

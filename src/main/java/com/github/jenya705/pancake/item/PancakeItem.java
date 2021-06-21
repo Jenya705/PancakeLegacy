@@ -37,10 +37,10 @@ public @interface PancakeItem {
 
     /**
      *
-     * Return additional enchantment level
+     * Return additional enchantment cost
      *
-     * @return additional enchantment level
+     * @return additional enchantment cost
      */
-    int additionalEnchantmentLevel() default 0;
+    int additionalEnchantmentCost() default 0;
 
 }
