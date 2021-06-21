@@ -1,5 +1,7 @@
 package com.github.jenya705.pancake.enchantment;
 
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.rarity.PancakeEnchantmentRarity;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.AccessLevel;
@@ -88,7 +90,8 @@ public class PancakeEnchantmentWrapper extends Enchantment {
 
     @Override
     public @NotNull EnchantmentRarity getRarity() {
-        return getEnchantmentContainer().getRarity();
+        EnchantmentRarity rarity = PancakeEnchantmentRarity.asBukkit(getEnchantmentContainer().getRarity());
+        return rarity == null ? EnchantmentRarity.COMMON : rarity;
     }
 
     @Override

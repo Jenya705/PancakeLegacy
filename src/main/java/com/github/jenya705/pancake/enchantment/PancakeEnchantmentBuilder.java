@@ -19,7 +19,7 @@ public class PancakeEnchantmentBuilder {
     private String name;
     private String id;
     private EnchantmentTarget target = null;
-    private EnchantmentRarity rarity = EnchantmentRarity.COMMON;
+    private float rarity = EnchantmentRarity.COMMON.getWeight();
     private int maxLevel = 1;
     private int startLevel = 1;
     private String[] conflicts = new String[0];
@@ -46,7 +46,7 @@ public class PancakeEnchantmentBuilder {
         return this;
     }
 
-    public PancakeEnchantmentBuilder rarity(EnchantmentRarity rarity) {
+    public PancakeEnchantmentBuilder rarity(float rarity) {
         setRarity(rarity);
         return this;
     }
@@ -113,7 +113,7 @@ public class PancakeEnchantmentBuilder {
             }
 
             @Override
-            public EnchantmentRarity rarity() {
+            public float rarity() {
                 return getRarity();
             }
 

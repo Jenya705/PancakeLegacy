@@ -6,6 +6,9 @@ package com.github.jenya705.pancake;
 public interface PancakeMessage {
 
     /**
+     *
+     * Return message with local as content
+     *
      * @param local Message with & as Color translator
      * @return {@link PancakeMessage} implementation
      */
@@ -14,11 +17,17 @@ public interface PancakeMessage {
     }
 
     /**
+     *
+     * Return raw message (Paragraph as color translator)
+     *
      * @return Message with Paragraph as Color translator
      */
     String getRaw();
 
     /**
+     *
+     * Return local (user-friendly) message (& as color translator)
+     *
      * @return Message with & as Color translator
      */
     String getLocal();

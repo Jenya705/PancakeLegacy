@@ -6,9 +6,9 @@ import com.github.jenya705.pancake.enchantment.PancakeEnchantment;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentEventHandler;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentListener;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
+import com.github.jenya705.pancake.enchantment.rarity.PancakeEnchantmentRarity;
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.event.DamageByEntityItemEvent;
-import io.papermc.paper.enchantments.EnchantmentRarity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +19,7 @@ import org.bukkit.entity.Entity;
         id = "pancake:defense_fire",
         name = "Defense fire",
         target = EnchantmentTarget.ARMOR,
-        rarity = EnchantmentRarity.RARE,
+        rarity = PancakeEnchantmentRarity.RARE_VALUE,
         treasure = false,
         conflicts = {"minecraft:fire_protection"},
         maxLevel = 3

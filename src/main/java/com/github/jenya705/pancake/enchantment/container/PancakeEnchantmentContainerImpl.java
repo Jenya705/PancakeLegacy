@@ -1,29 +1,30 @@
-package com.github.jenya705.pancake.enchantment;
+package com.github.jenya705.pancake.enchantment.container;
 
+import com.github.jenya705.pancake.enchantment.PancakeEnchantment;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentCost;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentWrapper;
+import com.github.jenya705.pancake.enchantment.rarity.PancakeEnchantmentRarity;
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.util.PancakeUtils;
-import io.papermc.paper.enchantments.EnchantmentRarity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.bukkit.enchantments.EnchantmentTarget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentContainer<T> {
 
     private String name;
     private String id;
     private EnchantmentTarget target;
-    private EnchantmentRarity rarity;
+    private PancakeEnchantmentRarity rarity;
     private int maxLevel;
     private int startLevel;
     private String[] conflicts;
@@ -57,7 +58,7 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
         setName(pancakeEnchantment.name());
         setId(pancakeEnchantment.id());
         setTarget(pancakeEnchantment.target());
-        setRarity(pancakeEnchantment.rarity());
+        setRarity(PancakeEnchantmentRarity.of(pancakeEnchantment.rarity()));
         setMaxLevel(pancakeEnchantment.maxLevel());
         setStartLevel(pancakeEnchantment.startLevel());
         setConflicts(pancakeEnchantment.conflicts());
@@ -117,4 +118,37 @@ public class PancakeEnchantmentContainerImpl<T> implements PancakeEnchantmentCon
         }
         exactHandlers.add(handler);
     }
+
+    @Override
+    public PancakeEnchantmentWrapper getWrapper() {
+        if (wrapper == null) setWrapper(new PancakeEnchantmentWrapper(this));
+        return wrapper;
+    }
+
+    public static class PancakeEnchantmentContainerImplBuilder<T> {
+
+        public PancakeEnchantmentContainerImplBuilder() {
+            conflicts = new String[0];
+            discoverable = true;
+            tradeable = true;
+            treasure = true;
+            maxLevel = 1;
+            startLevel = 1;
+            rarity = PancakeEnchantmentRarity.COMMON;
+        }
+
+        public PancakeEnchantmentContainerImplBuilder<T> conflict(String conflict) {
+            if (conflicts == null) {
+                conflicts = new String[1];
+                conflicts[0] = conflict;
+            }
+            else {
+                conflicts = Arrays.copyOf(conflicts, conflicts.length + 1);
+                conflicts[conflicts.length - 1] = conflict;
+            }
+            return this;
+        }
+
+    }
+
 }

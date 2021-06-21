@@ -7,8 +7,8 @@ import com.github.jenya705.pancake.command.CommandGive;
 import com.github.jenya705.pancake.data.PancakeDataFactory;
 import com.github.jenya705.pancake.data.PancakeDataFactoryImpl;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentTableListener;
-import com.github.jenya705.pancake.enchantment.PancakeEnchantmentWeightContainer;
-import com.github.jenya705.pancake.enchantment.PancakeEnchantmentWeightContainerImpl;
+import com.github.jenya705.pancake.enchantment.weight.PancakeEnchantmentWeightContainer;
+import com.github.jenya705.pancake.enchantment.weight.PancakeEnchantmentWeightContainerImpl;
 import com.github.jenya705.pancake.event.armorequip.ArmorEquipRegisterUtils;
 import com.github.jenya705.pancake.item.PancakeBukkitItemListener;
 import com.github.jenya705.pancake.item.model.CustomModelDataContainer;
@@ -58,6 +58,7 @@ public final class Pancake extends JavaPlugin {
     @Override
     @SneakyThrows
     public void onLoad() {
+        getDataFolder().mkdir();
         setPlugin(this);
         setNms(new PancakeNMSImpl());
         setProtocolManager(ProtocolLibrary.getProtocolManager());
@@ -77,6 +78,7 @@ public final class Pancake extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             getLogger().info("This version of pancake is only for 1.16.3, 1.16.4 or 1.16.5 version of the newest paper");
             getServer().getPluginManager().disablePlugin(plugin);
+            return;
         }
         PancakeEnchantmentWeightContainerImpl.initializeBukkitEnchantments(getEnchantmentWeightContainer());
         getResourcePack().meta(6, "Pancake plugin resource pack");
@@ -86,7 +88,6 @@ public final class Pancake extends JavaPlugin {
         getRegister().registerAll("com.github.jenya705.pancake", this);
         getServer().getPluginManager().registerEvents(new PancakeBukkitItemListener(), this);
         getServer().getPluginManager().registerEvents(new PancakeEnchantmentTableListener(), this);
-        getDataFolder().mkdir();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.github.jenya705.pancake.enchantment;
 
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

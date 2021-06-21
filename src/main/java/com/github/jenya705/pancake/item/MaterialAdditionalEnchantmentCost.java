@@ -2,6 +2,9 @@ package com.github.jenya705.pancake.item;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Constants for all vanilla materials additional enchantment costs
+ */
 @UtilityClass
 public class MaterialAdditionalEnchantmentCost {
 

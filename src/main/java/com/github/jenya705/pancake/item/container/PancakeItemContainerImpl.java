@@ -1,7 +1,10 @@
-package com.github.jenya705.pancake.item;
+package com.github.jenya705.pancake.item.container;
 
 import com.github.jenya705.pancake.Pancake;
+import com.github.jenya705.pancake.item.PancakeItem;
+import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
+import com.github.jenya705.pancake.item.model.CustomModelItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,13 +49,43 @@ public class PancakeItemContainerImpl<T> implements PancakeItemContainer<T> {
         setValues(source, pancakeItemAnnotation, customModelData);
     }
 
-    protected void setValues(T source, PancakeItem pancakeItemAnnotation, int customModelID) {
-        setCustomModelData(customModelID);
+    /**
+     * @param source Source object
+     */
+    public PancakeItemContainerImpl(T source) {
+        Class<?> clazz = source.getClass();
+        PancakeItem pancakeItemAnnotation = clazz.getAnnotation(PancakeItem.class);
+        if (pancakeItemAnnotation == null) {
+            throw new IllegalArgumentException("Source doesn't have PancakeItem annotation");
+        }
+        setValues(source, pancakeItemAnnotation);
+    }
+
+    /**
+     * @param source Source object
+     * @param pancakeItemAnnotation pancake item annotation
+     */
+    public PancakeItemContainerImpl(T source, PancakeItem pancakeItemAnnotation) {
+        setValues(source, pancakeItemAnnotation);
+    }
+
+    protected void setValues(T source, PancakeItem pancakeItemAnnotation, int customModelData) {
+        setCustomModelData(customModelData);
         setName(pancakeItemAnnotation.name());
         setId(pancakeItemAnnotation.id().toLowerCase(Locale.ROOT));
         setAdditionalEnchantmentCost(pancakeItemAnnotation.additionalEnchantmentCost());
         setMaterial(pancakeItemAnnotation.material());
         setSource(source);
+    }
+
+    protected void setValues(T source, PancakeItem pancakeItemAnnotation) {
+        setName(pancakeItemAnnotation.name());
+        setId(pancakeItemAnnotation.id().toLowerCase(Locale.ROOT));
+        setAdditionalEnchantmentCost(pancakeItemAnnotation.additionalEnchantmentCost());
+        setMaterial(pancakeItemAnnotation.material());
+        setSource(source);
+        setCustomModelData(getSource() instanceof CustomModelItem ?
+                Pancake.getPlugin().getCustomModelDataContainer().getCustomModelData(this) : 0);
     }
 
     @Override

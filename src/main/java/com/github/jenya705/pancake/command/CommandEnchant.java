@@ -1,8 +1,8 @@
 package com.github.jenya705.pancake.command;
 
 import com.github.jenya705.pancake.Pancake;
-import com.github.jenya705.pancake.enchantment.PancakeEnchantmentContainer;
 import com.github.jenya705.pancake.enchantment.PancakeEnchantmentUtils;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

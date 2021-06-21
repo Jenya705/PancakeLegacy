@@ -3,10 +3,12 @@ package com.github.jenya705.pancake.item.model;
 import com.github.jenya705.pancake.Pancake;
 import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.item.PancakeItem;
+import com.github.jenya705.pancake.item.container.PancakeItemContainer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.bukkit.Material;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,21 +34,30 @@ public class CustomModelDataContainerImpl implements CustomModelDataContainer {
 
     @Override
     public int getCustomModelData(Object source, PancakeItem annotation) {
+        return getCustomModelData(source, annotation.material(), annotation.id());
+    }
+
+    @Override
+    public int getCustomModelData(PancakeItemContainer<?> itemContainer) {
+        return getCustomModelData(itemContainer.getSource(), itemContainer.getMaterial(), itemContainer.getID());
+    }
+
+    public int getCustomModelData(Object source, Material material, String id) {
         if (!(source instanceof CustomModelItem)) {
             throw new IllegalArgumentException("Item is not CustomModelItem");
         }
-        List<Object> materialCustomModelData = getData().getArray(annotation.material().name(), null);
+        List<Object> materialCustomModelData = getData().getArray(material.name(), null);
         if (materialCustomModelData == null) {
-            getData().set(annotation.material().name(), materialCustomModelData = new ArrayList<>());
+            getData().set(material.name(), materialCustomModelData = new ArrayList<>());
         }
         int i = 1;
         for (Object obj: materialCustomModelData) {
-            if (obj instanceof String && ((String) obj).equalsIgnoreCase(annotation.id())) {
+            if (obj instanceof String && ((String) obj).equalsIgnoreCase(id)) {
                 return i;
             }
             ++i;
         }
-        materialCustomModelData.add(annotation.id());
+        materialCustomModelData.add(id);
         return materialCustomModelData.size();
     }
 

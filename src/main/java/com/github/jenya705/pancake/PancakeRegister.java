@@ -1,8 +1,13 @@
 package com.github.jenya705.pancake;
 
-import com.github.jenya705.pancake.enchantment.*;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantment;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentEventHandler;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentListener;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentSelfBuilder;
 import com.github.jenya705.pancake.item.PancakeItem;
-import com.github.jenya705.pancake.item.PancakeItemContainer;
+import com.github.jenya705.pancake.item.container.PancakeItemContainer;
 import com.github.jenya705.pancake.item.PancakeItemEventHandler;
 import com.github.jenya705.pancake.item.PancakeItemListener;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
@@ -103,6 +108,36 @@ public interface PancakeRegister {
      * @param plugin Item owner
      */
     void registerItem(Object item, PancakeItem annotation, JavaPlugin plugin);
+
+    /**
+     *
+     * Register item.
+     * If item container source is instance of {@link PancakeConfigurable} it will load and save it automatically
+     *
+     * @param itemContainer Container of item
+     * @param plugin Item owner
+     */
+    void registerItem(PancakeItemContainer<?> itemContainer, JavaPlugin plugin);
+
+    /**
+     *
+     * Register enchantment.
+     * If enchantment is instance of {@link PancakeConfigurable} it will load and save it automatically
+     *
+     * @param enchantment Builder of enchantment container
+     * @param plugin Enchantment owner
+     */
+    void registerEnchantment(PancakeEnchantmentSelfBuilder enchantment, JavaPlugin plugin);
+
+    /**
+     *
+     * Register enchantment.
+     * If enchantment container source is instance of {@link PancakeConfigurable} it will load and save it automatically
+     *
+     * @param enchantmentContainer Container of enchantment
+     * @param plugin Enchantment owner
+     */
+    void registerEnchantment(PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin);
 
     /**
      *

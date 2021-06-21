@@ -1,6 +1,6 @@
 package com.github.jenya705.pancake.item.model;
 
-import com.github.jenya705.pancake.item.PancakeItemContainer;
+import com.github.jenya705.pancake.item.container.PancakeItemContainer;
 import com.github.jenya705.pancake.resourcepack.ResourcePackModel;
 import com.github.jenya705.pancake.resourcepack.ResourcePackModelOverride;
 

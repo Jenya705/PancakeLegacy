@@ -1,9 +1,10 @@
-package com.github.jenya705.pancake.enchantment;
+package com.github.jenya705.pancake.enchantment.container;
 
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
+import com.github.jenya705.pancake.enchantment.rarity.PancakeEnchantmentRarity;
 import com.github.jenya705.pancake.item.PancakeItemSource;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
-import io.papermc.paper.enchantments.EnchantmentRarity;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 
@@ -14,6 +15,16 @@ import java.util.function.BiFunction;
  * @param <T> Source type
  */
 public interface PancakeEnchantmentContainer<T> {
+
+    /**
+     *
+     * Return builder of pancake enchantment container
+     *
+     * @return builder
+     */
+    static <T> PancakeEnchantmentContainerImpl.PancakeEnchantmentContainerImplBuilder<T> builder(T source) {
+        return new PancakeEnchantmentContainerImpl.PancakeEnchantmentContainerImplBuilder<T>().source(source);
+    }
 
     /**
      *
@@ -45,7 +56,7 @@ public interface PancakeEnchantmentContainer<T> {
      *
      * @return Rarity of enchantment
      */
-    EnchantmentRarity getRarity();
+    PancakeEnchantmentRarity getRarity();
 
     /**
      *

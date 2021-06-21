@@ -1,6 +1,6 @@
 package com.github.jenya705.pancake.enchantment;
 
-import io.papermc.paper.enchantments.EnchantmentRarity;
+import com.github.jenya705.pancake.enchantment.rarity.PancakeEnchantmentRarity;
 import org.bukkit.enchantments.EnchantmentTarget;
 
 import java.lang.annotation.ElementType;
@@ -45,7 +45,7 @@ public @interface PancakeEnchantment {
      *
      * @return Enchantment rarity
      */
-    EnchantmentRarity rarity() default EnchantmentRarity.COMMON;
+    float rarity() default PancakeEnchantmentRarity.COMMON_VALUE;
 
     /**
      *

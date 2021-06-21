@@ -1,7 +1,7 @@
 package com.github.jenya705.pancake.enchantment;
 
 import com.github.jenya705.pancake.Pancake;
-import com.github.jenya705.pancake.util.Pair;
+import com.github.jenya705.pancake.enchantment.weight.PancakeEnchantmentWeightObject;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,11 +15,11 @@ public class PancakeEnchantmentTableListener implements Listener {
     public void enchantComplete(EnchantItemEvent event) {
         if (event.isCancelled() || event.getEnchantsToAdd().isEmpty()) return;
         Pancake pancake = Pancake.getPlugin();
-        List<Pair<PancakeEnchantmentContainer<?>, Integer>> toAdd = pancake.getEnchantmentWeightContainer()
+        List<PancakeEnchantmentWeightObject> toAdd = pancake.getEnchantmentWeightContainer()
                 .getLineRandomEnchantmentContainersForEnchant(event.getItem(), event.whichButton(), event.getExpLevelCost());
         event.getEnchantsToAdd().clear();
         toAdd.forEach(it ->
-            event.getEnchantsToAdd().put(it.left().getWrapper(), it.right())
+            event.getEnchantsToAdd().put(it.getEnchantmentContainer().getWrapper(), it.getLevel())
         );
     }
 

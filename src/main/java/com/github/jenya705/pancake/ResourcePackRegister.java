@@ -1,6 +1,6 @@
 package com.github.jenya705.pancake;
 
-import com.github.jenya705.pancake.item.PancakeItemContainer;
+import com.github.jenya705.pancake.item.container.PancakeItemContainer;
 import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -2,8 +2,16 @@ package com.github.jenya705.pancake;
 
 import com.github.jenya705.pancake.data.PancakeData;
 import com.github.jenya705.pancake.data.PancakeDataType;
-import com.github.jenya705.pancake.enchantment.*;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantment;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentEventHandler;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentListener;
+import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainerImpl;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentSelfBuilder;
 import com.github.jenya705.pancake.item.*;
+import com.github.jenya705.pancake.item.container.PancakeItemContainer;
+import com.github.jenya705.pancake.item.container.PancakeItemContainerImpl;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.item.model.CustomModelArmor;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
@@ -67,7 +75,13 @@ public class PancakeRegisterImpl implements PancakeRegister {
                                 "it needs void constructor. Class: %s", enchantClass.getName()));
                 continue;
             }
-            registerEnchantment(constructor.newInstance(), plugin);
+            Object enchantmentSource = constructor.newInstance();
+            if (enchantmentSource instanceof PancakeEnchantmentSelfBuilder) {
+                registerEnchantment((PancakeEnchantmentSelfBuilder) enchantmentSource, plugin);
+            }
+            else {
+                registerEnchantment(enchantmentSource, plugin);
+            }
         }
         getItems().forEach((id, itemContainer) -> {
             try {
@@ -171,6 +185,13 @@ public class PancakeRegisterImpl implements PancakeRegister {
     }
 
     @Override
+    public void registerItem(PancakeItemContainer<?> itemContainer, JavaPlugin plugin) {
+        if (itemContainer.getSource() instanceof PancakeConfigurable) {
+            configurable((PancakeConfigurable) itemContainer.getSource(), itemContainer.getID(), plugin);
+        }
+    }
+
+    @Override
     public void registerEnchantment(Object enchantment, JavaPlugin plugin) {
         PancakeEnchantment annotation = enchantment.getClass().getAnnotation(PancakeEnchantment.class);
         if (annotation == null) throw new IllegalArgumentException("Object does not have PancakeEnchantment annotation");
@@ -178,13 +199,17 @@ public class PancakeRegisterImpl implements PancakeRegister {
     }
 
     @Override
-    public void registerEnchantment(Object enchantment, PancakeEnchantment annotation, JavaPlugin plugin) {
+    public void registerEnchantment(PancakeEnchantmentSelfBuilder enchantment, JavaPlugin plugin) {
+        registerEnchantment(enchantment.build(), plugin);
+    }
+
+    @Override
+    public void registerEnchantment(PancakeEnchantmentContainer<?> enchantmentContainer, JavaPlugin plugin) {
         Pancake pancake = Pancake.getPlugin();
-        PancakeEnchantmentContainer<?> enchantmentContainer = new PancakeEnchantmentContainerImpl<>(enchantment, annotation);
-        getEnchantments().put(annotation.id().toLowerCase(Locale.ROOT), enchantmentContainer);
+        getEnchantments().put(enchantmentContainer.getId().toLowerCase(Locale.ROOT), enchantmentContainer);
         pancake.getEnchantmentWeightContainer().addEnchantmentContainer(enchantmentContainer);
-        if (enchantment instanceof PancakeConfigurable) {
-            configurable((PancakeConfigurable) enchantment, annotation.id(), plugin);
+        if (enchantmentContainer.getSource() instanceof PancakeConfigurable) {
+            configurable((PancakeConfigurable) enchantmentContainer.getSource(), enchantmentContainer.getId(), plugin);
         }
         if (enchantmentContainer.getWrapper() != null) {
             try {
@@ -196,6 +221,12 @@ public class PancakeRegisterImpl implements PancakeRegister {
                 plugin.getLogger().log(Level.SEVERE, "[Pancake] Can not register enchantment as wrapper because:", e);
             }
         }
+    }
+
+    @Override
+    public void registerEnchantment(Object enchantment, PancakeEnchantment annotation, JavaPlugin plugin) {
+        PancakeEnchantmentContainer<?> enchantmentContainer = new PancakeEnchantmentContainerImpl<>(enchantment, annotation);
+        registerEnchantment(enchantmentContainer, plugin);
     }
 
     @Override

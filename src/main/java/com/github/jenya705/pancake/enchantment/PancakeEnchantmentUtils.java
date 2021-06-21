@@ -1,6 +1,8 @@
 package com.github.jenya705.pancake.enchantment;
 
 import com.github.jenya705.pancake.Pancake;
+import com.github.jenya705.pancake.enchantment.container.BukkitPancakeEnchantmentContainer;
+import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
 import com.github.jenya705.pancake.item.PancakeItemStack;
 import com.github.jenya705.pancake.item.PancakeItemUtils;
 import lombok.experimental.UtilityClass;
