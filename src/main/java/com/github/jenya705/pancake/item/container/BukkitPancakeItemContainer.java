@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BukkitPancakeItemContainer implements PancakeItemContainer<Void> {
+public class BukkitPancakeItemContainer extends EventablePancakeItemContainer<Void> {
 
     private ItemStack itemStack;
 
@@ -50,13 +50,4 @@ public class BukkitPancakeItemContainer implements PancakeItemContainer<Void> {
         return Pancake.getPlugin().getNms().itemCMethod(itemStack);
     }
 
-    @Override
-    public void addHandler(Class<? extends PancakeItemEvent> event, PancakeItemSource source, Consumer<PancakeItemEvent> consumer) {
-        /* Empty */
-    }
-
-    @Override
-    public void invokeEvent(PancakeItemEvent event, PancakeItemSource source) {
-        /* Empty */
-    }
 }
