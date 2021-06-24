@@ -29,7 +29,7 @@ public interface PancakeItemContainer<T> {
      *
      * @return id of item (e.g. minecraft:diamond_ore)
      */
-    String getID();
+    String getId();
 
     /**
      *

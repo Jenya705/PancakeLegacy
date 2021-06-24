@@ -34,7 +34,7 @@ public class PancakeItemStackImpl implements PancakeItemStack {
         setNbt(new NBTItem(getBukkit()));
         if (!getNbt().hasKey(PancakeItemUtils.pancakeType)) throw new IllegalArgumentException("ItemStack is not PancakeItemStack");
         setItemContainer(PancakeItemUtils.getSafeItemContainer(nbt.getString(PancakeItemUtils.pancakeType)));
-        setId(getItemContainer().getID());
+        setId(getItemContainer().getId());
         setEnchantments(PancakeEnchantmentUtils.getEnchantments(this));
     }
 

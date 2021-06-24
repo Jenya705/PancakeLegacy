@@ -68,7 +68,7 @@ public class PancakeItemUtils {
         itemMeta.setCustomModelData(itemContainer.getCustomModelData());
         itemStack.setItemMeta(itemMeta);
         NBTItem nbt = new NBTItem(itemStack);
-        nbt.setString(pancakeType, itemContainer.getID());
+        nbt.setString(pancakeType, itemContainer.getId());
         return nbt.getItem();
     }
 

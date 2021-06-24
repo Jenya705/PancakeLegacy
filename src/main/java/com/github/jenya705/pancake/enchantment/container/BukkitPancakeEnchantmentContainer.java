@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
  */
 @Setter(AccessLevel.PROTECTED)
 @Getter
-public class BukkitPancakeEnchantmentContainer implements PancakeEnchantmentContainer<Void> {
+public class BukkitPancakeEnchantmentContainer extends EventablePancakeEnchantmentContainer<Void> {
 
     private static final Map<String, BukkitPancakeEnchantmentContainer> vanillaEnchantments = new HashMap<>();
     static {
@@ -33,7 +33,6 @@ public class BukkitPancakeEnchantmentContainer implements PancakeEnchantmentCont
     }
 
     private Enchantment bukkitEnchantment;
-    private Map<Class<? extends PancakeItemEvent>, List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>>> handlers;
 
     public BukkitPancakeEnchantmentContainer(Enchantment bukkitEnchantment) {
         setBukkitEnchantment(bukkitEnchantment);
@@ -109,33 +108,6 @@ public class BukkitPancakeEnchantmentContainer implements PancakeEnchantmentCont
     @Override
     public int getMaxCost(int level) {
         return Pancake.getPlugin().getNms().enchantmentBMethodInteger(getBukkitEnchantment(), level);
-    }
-
-    @Override
-    public void invokeEvent(PancakeItemEvent event, PancakeItemSource source, PancakeEnchantmentObject enchantmentObject) {
-        if (getHandlers() == null) return;
-        List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>> sourceHandlers = getHandlers().getOrDefault(event.getClass(), null);
-        if (sourceHandlers == null) return;
-        List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>> exactHandlers = sourceHandlers.get(source.ordinal());
-        if (exactHandlers == null) return;
-        exactHandlers.forEach(handler -> handler.apply(event, enchantmentObject));
-    }
-
-    @Override
-    public void addHandler(Class<? extends PancakeItemEvent> eventClazz, PancakeItemSource source, BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void> handler) {
-        if (getHandlers() == null) setHandlers(new HashMap<>());
-        List<List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>>> sourceHandlers = getHandlers().getOrDefault(eventClazz, null);
-        if (sourceHandlers == null) {
-            sourceHandlers = new ArrayList<>(PancakeItemSource.values().length);
-            for (int i = 0; i < PancakeItemSource.values().length; ++i) sourceHandlers.add(null);
-            getHandlers().put(eventClazz, sourceHandlers);
-        }
-        List<BiFunction<PancakeItemEvent, PancakeEnchantmentObject, Void>> exactHandlers = sourceHandlers.get(source.ordinal());
-        if (exactHandlers == null) {
-            exactHandlers = new ArrayList<>();
-            sourceHandlers.set(source.ordinal(), exactHandlers);
-        }
-        exactHandlers.add(handler);
     }
 
     /**

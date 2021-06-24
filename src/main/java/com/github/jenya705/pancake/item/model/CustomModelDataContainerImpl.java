@@ -39,7 +39,7 @@ public class CustomModelDataContainerImpl implements CustomModelDataContainer {
 
     @Override
     public int getCustomModelData(PancakeItemContainer<?> itemContainer) {
-        return getCustomModelData(itemContainer.getSource(), itemContainer.getMaterial(), itemContainer.getID());
+        return getCustomModelData(itemContainer.getSource(), itemContainer.getMaterial(), itemContainer.getId());
     }
 
     public int getCustomModelData(Object source, Material material, String id) {

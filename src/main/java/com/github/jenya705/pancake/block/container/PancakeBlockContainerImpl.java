@@ -9,11 +9,12 @@ import org.bukkit.Material;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
-public class PancakeBlockContainerImpl<T> implements PancakeBlockContainer<T> {
+public class PancakeBlockContainerImpl<T> extends EventablePancakeBlockContainer<T> {
 
     private String name;
     private String id;
-    private Material material;
+    private Material itemMaterial;
+    private Material blockMaterial;
     private T source;
     private PancakeItemContainer<T> blockItem;
     private int note;
@@ -21,7 +22,8 @@ public class PancakeBlockContainerImpl<T> implements PancakeBlockContainer<T> {
     public PancakeBlockContainerImpl(T source, PancakeBlock annotation) {
         setName(annotation.name());
         setId(annotation.id());
-        setMaterial(annotation.material());
+        setItemMaterial(annotation.itemMaterial());
+        setBlockMaterial(annotation.blockMaterial());
         setSource(source);
         setBlockItem(new PancakeBlockItemContainer<>(this));
     }

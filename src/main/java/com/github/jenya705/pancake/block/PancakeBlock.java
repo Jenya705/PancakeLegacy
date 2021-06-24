@@ -15,6 +15,8 @@ public @interface PancakeBlock {
 
     String id();
 
-    Material material();
+    Material itemMaterial();
+
+    Material blockMaterial() default Material.NOTE_BLOCK;
 
 }

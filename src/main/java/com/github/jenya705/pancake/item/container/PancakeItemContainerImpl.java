@@ -2,17 +2,14 @@ package com.github.jenya705.pancake.item.container;
 
 import com.github.jenya705.pancake.Pancake;
 import com.github.jenya705.pancake.item.PancakeItem;
-import com.github.jenya705.pancake.item.PancakeItemSource;
-import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import com.github.jenya705.pancake.item.model.CustomModelItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.logging.Level;
+import java.util.Locale;
+import java.util.Objects;
 
 @Setter(AccessLevel.PROTECTED)
 @Getter
@@ -85,11 +82,6 @@ public class PancakeItemContainerImpl<T> extends EventablePancakeItemContainer<T
         setSource(source);
         setCustomModelData(getSource() instanceof CustomModelItem ?
                 Pancake.getPlugin().getCustomModelDataContainer().getCustomModelData(this) : 0);
-    }
-
-    @Override
-    public String getID() {
-        return id;
     }
 
     @Override

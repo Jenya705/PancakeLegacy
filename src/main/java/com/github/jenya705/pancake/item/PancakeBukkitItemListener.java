@@ -5,6 +5,7 @@ import com.github.jenya705.pancake.item.event.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,6 +38,12 @@ public class PancakeBukkitItemListener implements Listener {
         DamageByEntityItemEvent nonDamagerEvent = new DamageByEntityItemEvent(event, false);
         PancakeItemEventUtils.invokeEvent(damagerEvent, event.getDamager() instanceof Player ? (Player) event.getDamager() : null);
         PancakeItemEventUtils.invokeEvent(nonDamagerEvent, event.getEntity() instanceof Player ? (Player) event.getEntity() : null);
+    }
+
+    @EventHandler
+    public void blockPlace(BlockPlaceEvent event) {
+        BlockPlaceItemEvent pancakeEvent = new BlockPlaceItemEvent(event);
+        PancakeItemEventUtils.invokeEvent(pancakeEvent, event.getPlayer());
     }
 
 }

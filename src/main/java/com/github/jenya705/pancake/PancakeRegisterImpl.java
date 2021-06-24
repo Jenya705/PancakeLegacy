@@ -9,7 +9,10 @@ import com.github.jenya705.pancake.enchantment.PancakeEnchantmentObject;
 import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainer;
 import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentContainerImpl;
 import com.github.jenya705.pancake.enchantment.container.PancakeEnchantmentSelfBuilder;
-import com.github.jenya705.pancake.item.*;
+import com.github.jenya705.pancake.item.PancakeEventHandlerException;
+import com.github.jenya705.pancake.item.PancakeItem;
+import com.github.jenya705.pancake.item.PancakeItemEventHandler;
+import com.github.jenya705.pancake.item.PancakeItemListener;
 import com.github.jenya705.pancake.item.container.PancakeItemContainer;
 import com.github.jenya705.pancake.item.container.PancakeItemContainerImpl;
 import com.github.jenya705.pancake.item.event.PancakeItemEvent;
@@ -116,7 +119,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
             plugin.getServer().getPluginManager().registerEvents((Listener) source, plugin);
         }
         if (source instanceof PancakeItemListener) {
-            registerPancakeItemListener((PancakeItemListener) source, itemContainer == null ? null : itemContainer.getID(), plugin);
+            registerPancakeItemListener((PancakeItemListener) source, itemContainer == null ? null : itemContainer.getId(), plugin);
         }
         if (source instanceof PancakeEnchantmentListener) {
             registerPancakeEnchantmentListener((PancakeEnchantmentListener) source, enchantmentContainer == null ? null : enchantmentContainer.getId(), plugin);
@@ -187,7 +190,7 @@ public class PancakeRegisterImpl implements PancakeRegister {
     @Override
     public void registerItem(PancakeItemContainer<?> itemContainer, JavaPlugin plugin) {
         if (itemContainer.getSource() instanceof PancakeConfigurable) {
-            configurable((PancakeConfigurable) itemContainer.getSource(), itemContainer.getID(), plugin);
+            configurable((PancakeConfigurable) itemContainer.getSource(), itemContainer.getId(), plugin);
         }
     }
 

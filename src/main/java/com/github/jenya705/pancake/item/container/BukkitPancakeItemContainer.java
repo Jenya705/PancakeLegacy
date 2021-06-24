@@ -1,8 +1,6 @@
 package com.github.jenya705.pancake.item.container;
 
 import com.github.jenya705.pancake.Pancake;
-import com.github.jenya705.pancake.item.PancakeItemSource;
-import com.github.jenya705.pancake.item.event.PancakeItemEvent;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Locale;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
@@ -26,7 +24,7 @@ public class BukkitPancakeItemContainer extends EventablePancakeItemContainer<Vo
     }
 
     @Override
-    public String getID() {
+    public String getId() {
         return "minecraft:" + itemStack.getType().name().toLowerCase(Locale.ROOT);
     }
 
@@ -50,4 +48,8 @@ public class BukkitPancakeItemContainer extends EventablePancakeItemContainer<Vo
         return Pancake.getPlugin().getNms().itemCMethod(itemStack);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
